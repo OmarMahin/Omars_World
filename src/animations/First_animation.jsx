@@ -1,5 +1,7 @@
 import React from 'react'
 import * as THREE from 'three'
+import * as CANNON from 'cannon-es'
+import CannonDebugger, * as C_DEBUGGER from 'cannon-es-debugger'
 
 
 const First_animation = () => {
@@ -25,7 +27,7 @@ const First_animation = () => {
     scene.add(ground)
     
     //box
-    const box = new THREE.Mesh(new THREE.BoxGeometry( 10, 10, 10 ), new THREE.MeshStandardMaterial(
+    const box = new THREE.Mesh(new THREE.BoxGeometry( 2, 2, 2 ), new THREE.MeshStandardMaterial(
         { color: "green", }
     ))
     // ground.position.y = -1
@@ -48,6 +50,40 @@ const First_animation = () => {
     scene.add(camera)
 
 
+    //physics
+
+    //physics world
+
+    const physics_world = new CANNON.World({
+        gravity: new CANNON.Vec3(0,-9.81,0),
+    })
+
+    //creating ground plane
+
+    const groundBody = new CANNON.Body({
+        type: CANNON.Body.STATIC,
+        shape: new CANNON.Plane(),
+
+    })
+
+    groundBody.quaternion.setFromEuler(-Math.PI/2, 0,0)
+    physics_world.addBody(groundBody)
+
+
+    //creating box
+
+    const boxBody = new CANNON.Body({
+        mass: 2,
+        shape: new CANNON.Box(new CANNON.Vec3(1,1,1)),
+
+    })
+
+
+    boxBody.position.set(0,20,0)
+    boxBody.quaternion.setFromEuler(Math.PI/4,Math.PI/4,0)
+
+    physics_world.addBody(boxBody)
+
     // //render
 
     const canvas = document.querySelector(".webgl")
@@ -67,8 +103,18 @@ const First_animation = () => {
         renderer.setSize(sizes.width, sizes.height)
     })
 
+    //cannon-es-debugger
+
+    const c_debug = new CannonDebugger(scene, physics_world, {})
 
     const animate = () => {
+
+        physics_world.fixedStep()
+        // c_debug.update() //physics debugger
+
+        box.position.copy(boxBody.position)
+        box.quaternion.copy(boxBody.quaternion)
+
         requestAnimationFrame(animate)
         renderer.render(scene, camera)
     }
