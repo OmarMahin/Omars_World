@@ -15,38 +15,41 @@ const First_animation = () => {
     //Scene
 
     const scene = new THREE.Scene()
-    scene.background = new THREE.Color("#E5E1DA" )
+    scene.background = new THREE.Color("#E5E1DA")
 
     //shape
 
     //ground
-    const ground = new THREE.Mesh(new THREE.BoxGeometry( 100, 1, 100 ), new THREE.MeshStandardMaterial(
-        { color: "E5E1DA", }
+    const ground = new THREE.Mesh(new THREE.BoxGeometry(100, 1, 100), new THREE.MeshStandardMaterial(
+        { color: "#d1d1d1", }
     ))
+    ground.name = 'ground'
     ground.position.y = -1
+    ground.userData.draggable = false
+    ground.userData.name = 'ground'
     scene.add(ground)
-    
+
     //box
-    const box = new THREE.Mesh(new THREE.BoxGeometry( 2, 2, 2 ), new THREE.MeshStandardMaterial(
+    const box = new THREE.Mesh(new THREE.BoxGeometry(2, 2, 2), new THREE.MeshStandardMaterial(
         { color: "green", }
     ))
-    // ground.position.y = -1
+    box.userData.draggable = true
+    box.userData.name = 'box'
     scene.add(box)
 
+    // light
 
-    // // light
-
-    const light = new THREE.PointLight("white", 10000)
+    const light = new THREE.PointLight("white", 60000)
     light.castShadow = true
-    light.position.set(0,50,10)
+    light.position.set(0, 100, 10)
     scene.add(light)
 
-    // //camera
+    //camera
 
     const camera = new THREE.PerspectiveCamera(45, sizes.width / sizes.height, 1, 1000)
     camera.position.z = 20
-    camera.position.y = 20  
-    camera.lookAt(0,0,0)
+    camera.position.y = 20
+    camera.lookAt(0, 0, 0)
     scene.add(camera)
 
 
@@ -55,7 +58,7 @@ const First_animation = () => {
     //physics world
 
     const physics_world = new CANNON.World({
-        gravity: new CANNON.Vec3(0,-9.81,0),
+        gravity: new CANNON.Vec3(0, -9.81, 0),
     })
 
     //creating ground plane
@@ -66,7 +69,7 @@ const First_animation = () => {
 
     })
 
-    groundBody.quaternion.setFromEuler(-Math.PI/2, 0,0)
+    groundBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0)
     physics_world.addBody(groundBody)
 
 
@@ -74,15 +77,18 @@ const First_animation = () => {
 
     const boxBody = new CANNON.Body({
         mass: 2,
-        shape: new CANNON.Box(new CANNON.Vec3(1,1,1)),
+        shape: new CANNON.Box(new CANNON.Vec3(1, 1, 1)),
 
     })
 
 
-    boxBody.position.set(0,20,0)
-    boxBody.quaternion.setFromEuler(Math.PI/4,Math.PI/4,0)
+    boxBody.position.set(0, 20, 0)
+    boxBody.quaternion.setFromEuler(Math.PI / 4, Math.PI / 4, 0)
 
     physics_world.addBody(boxBody)
+
+
+
 
     // //render
 
@@ -103,6 +109,76 @@ const First_animation = () => {
         renderer.setSize(sizes.width, sizes.height)
     })
 
+
+    // ray casting
+
+    const raycaster = new THREE.Raycaster()
+    const mouse = new THREE.Vector2()
+    const mouseMove = new THREE.Vector2()
+    let objects = new THREE.Object3D
+    let picked = false
+    let y_pos = null
+
+    window.addEventListener('mousedown', (e) => {
+
+        mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = - (e.clientY / window.innerHeight) * 2 + 1;
+
+        raycaster.setFromCamera(mouse, camera)
+
+        objects = raycaster.intersectObjects(scene.children)
+
+        if (objects.length > 0 && objects[0].object.userData.draggable) {
+            y_pos = objects[0].object.position.y
+            picked = true
+        }
+
+    })
+
+    //letting the object drop
+
+    window.addEventListener('mouseup', (e) => {
+        if (picked) {
+            picked = false
+            box.position.y = 5
+            boxBody.position.copy(box.position)
+            boxBody.quaternion.copy(box.quaternion)
+        }
+    })
+
+    //dragging the object
+
+    window.addEventListener('mousemove', (e) => {
+
+        const past_mouseMove_x = mouseMove.x
+        const past_mouseMove_y = mouseMove.y
+        
+        mouseMove.x = (e.clientX / window.innerWidth) * 2 - 1;
+        mouseMove.y = - (e.clientY / window.innerHeight) * 2 + 1;
+
+        if (mouseMove.x < -1 || mouseMove.x > 1){
+            mouseMove.x = past_mouseMove_x
+        }
+        if (mouseMove.y < -1 || mouseMove.y > 1){
+            mouseMove.y = past_mouseMove_y
+        }
+
+
+    })
+
+    //picking object and dragging it
+
+    let pickedObject = () => {
+        if (picked) {
+            raycaster.setFromCamera(mouseMove, camera)
+
+            objects = raycaster.intersectObjects(scene.children)
+            box.position.x = objects[0].point.x
+            box.position.z = objects[0].point.z
+
+        }
+    }
+
     //cannon-es-debugger
 
     const c_debug = new CannonDebugger(scene, physics_world, {})
@@ -114,7 +190,7 @@ const First_animation = () => {
 
         box.position.copy(boxBody.position)
         box.quaternion.copy(boxBody.quaternion)
-
+        pickedObject()
         requestAnimationFrame(animate)
         renderer.render(scene, camera)
     }
