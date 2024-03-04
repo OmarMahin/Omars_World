@@ -54,6 +54,7 @@ function wheel(radius, wheel_mass) {
     return body
 }
 
+
 export function controlBot(robot, input) {
     if (input == 'F') {
         robot.setWheelForce(-10, 1)
@@ -63,7 +64,7 @@ export function controlBot(robot, input) {
     }
 
     else if (input == 'L') {
-        robot.setWheelForce(-10, 1)
+        robot.setWheelForce(0, 1)
         robot.setWheelForce(-10, 0)
         // robot.setMotorSpeed(0,0)
         robot.setMotorSpeed(0, 1)
@@ -71,14 +72,14 @@ export function controlBot(robot, input) {
 
     else if (input == 'R') {
         robot.setWheelForce(-10, 1)
-        robot.setWheelForce(-10, 0)
+        robot.setWheelForce(0, 0)
         robot.setMotorSpeed(0, 0)
         // robot.setMotorSpeed(0, 1)
     }
 
     else if (input == 'S') {
-        robot.setWheelForce(-10, 1)
-        robot.setWheelForce(-10, 0)
+        robot.setWheelForce(0, 1)
+        robot.setWheelForce(0, 0)
         robot.setMotorSpeed(0, 0)
         robot.setMotorSpeed(0, 1)
     }

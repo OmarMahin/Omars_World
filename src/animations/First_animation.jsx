@@ -4,7 +4,7 @@ import * as CANNON from 'cannon-es'
 import CannonDebugger, * as C_DEBUGGER from 'cannon-es-debugger'
 
 
-import { bot, controlBot} from '../functions/Robot.jsx'
+import { bot, controlBot } from '../functions/Robot.jsx'
 
 
 
@@ -97,7 +97,6 @@ const First_animation = () => {
     //bot
 
     const robot = bot(5, 2, 4, 0, 5, 0, 3, 1.3, 5)
-    
 
     robot.addToWorld(physics_world)
 
