@@ -17,6 +17,8 @@ function botBody(w, h, d, px, py, pz, m) {
 
     })
 
+    botBody_.quaternion.setFromEuler(0, -Math.PI/4,0)
+
     return botBody_
 
 }
@@ -93,10 +95,11 @@ export function controlBot(robot, input) {
     }
 
     else if (input == 'S') {
-        robot.setWheelForce(0, 1)//left wheel
-        robot.setWheelForce(0, 0)//right wheel
-        // robot.setMotorSpeed(0, 0)//left wheel
-        // robot.setMotorSpeed(0, 1)//right wheel
+        // robot.setWheelForce(0, 1)//left wheel
+        // robot.setWheelForce(0, 0)//right wheel
+        robot.setMotorSpeed(0, 0)//left wheel
+        robot.setMotorSpeed(0, 1)//right wheel
+        
     }
 }
 

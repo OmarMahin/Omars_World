@@ -4,6 +4,9 @@ import * as CANNON from 'cannon-es'
 import CannonDebugger, * as C_DEBUGGER from 'cannon-es-debugger'
 import { bot, controlBot, botAddToScene, botRender, distanceFromBot } from '../functions/Robot.jsx'
 
+import { ball, render_Ball } from '../functions/Ball.jsx'
+import { Vector3 } from 'three'
+
 
 
 const First_animation = () => {
@@ -36,33 +39,9 @@ const First_animation = () => {
     ground.userData.name = 'ground'
     scene.add(ground)
 
+    //plane
     
-
-    //box
-    // const box = new THREE.Mesh(new THREE.BoxGeometry(2, 2, 2), new THREE.MeshStandardMaterial(
-    //     { color: "green", }
-    // ))
-    // box.userData.draggable = true
-    // box.userData.name = 'box'
-    // scene.add(box)
-
-    
-    //3d model
-
-    
-    
-
-    // const boxSphere = new THREE.Group()
-
-    // boxSphere.add(testBox)
-    // boxSphere.add(testSphere)
-
-    // scene.add(boxSphere)
-
-    // boxSphere.rotateY(Math.PI/4)
-
-    // console.log(boxSphere)
-
+    const plane = new THREE.Plane(new Vector3(0, 1, 0), 0)
 
     // light
 
@@ -100,17 +79,17 @@ const First_animation = () => {
 
     //bot
 
-    const robot = bot(5, 2, 3.99, -10, 5, 0, 3, 1.3, 5, physics_world, scene)
+    const robot = bot(5, 2, 3.99, -10, 5, 0, 7, 1.3, 5)
 
     robot.addToWorld(physics_world)
     botAddToScene(scene)
 
     controlBot(robot, 'S')
 
-    
-    
 
-    
+
+    const [physics_ball, ball_body] = ball(physics_world, scene, 0, 10, 0)
+
 
 
     //render
@@ -151,6 +130,8 @@ const First_animation = () => {
 
         objects = raycaster.intersectObjects(scene.children)
 
+
+
         if (objects.length > 0 && objects[0].object.userData.draggable) {
             y_pos = objects[0].object.position.y
             picked = true
@@ -160,14 +141,14 @@ const First_animation = () => {
 
     //letting the object drop
 
-    // window.addEventListener('mouseup', (e) => {
-    //     if (picked) {
-    //         picked = false
-    //         box.position.y = 5
-    //         boxBody.position.copy(box.position)
-    //         boxBody.quaternion.copy(box.quaternion)
-    //     }
-    // })
+    window.addEventListener('mouseup', (e) => {
+        if (picked) {
+            picked = false
+            ball_body.position.y = 5
+            physics_ball.position.copy(ball_body.position)
+            physics_ball.quaternion.copy(ball_body.quaternion)
+        }
+    })
 
     //dragging the object
 
@@ -186,7 +167,6 @@ const First_animation = () => {
             mouseMove.y = past_mouseMove_y
         }
 
-
     })
 
     //picking object and dragging it
@@ -195,13 +175,15 @@ const First_animation = () => {
         if (picked) {
             raycaster.setFromCamera(mouseMove, camera)
 
-            objects = raycaster.intersectObjects(scene.children)
-            box.position.x = objects[0].point.x
-            box.position.z = objects[0].point.z
+            let intersects = new THREE.Vector3()
+            raycaster.ray.intersectPlane(plane, intersects)
+
+            ball_body.position.set(intersects.x, intersects.y, intersects.z)
+
 
         }
     }
-    
+
     //cannon-es-debugger
 
     const c_debug = new CannonDebugger(scene, physics_world, {})
@@ -211,12 +193,11 @@ const First_animation = () => {
         physics_world.fixedStep()
         // c_debug.update() //physics debugger
 
-        // box.position.copy(boxBody.position)
-        // box.quaternion.copy(boxBody.quaternion)
+        render_Ball()
         botRender()
-        
+
         // const [distance,angle] = distanceFromBot(box)
-        // pickedObject(robotModel)
+        pickedObject()
         requestAnimationFrame(animate)
         renderer.render(scene, camera)
     }
