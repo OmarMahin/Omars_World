@@ -2,8 +2,6 @@ import React from 'react'
 import * as THREE from 'three'
 import * as CANNON from 'cannon-es'
 import CannonDebugger, * as C_DEBUGGER from 'cannon-es-debugger'
-
-
 import { bot, controlBot, botAddToScene, botRender, distanceFromBot } from '../functions/Robot.jsx'
 
 
@@ -41,15 +39,18 @@ const First_animation = () => {
     
 
     //box
-    const box = new THREE.Mesh(new THREE.BoxGeometry(2, 2, 2), new THREE.MeshStandardMaterial(
-        { color: "green", }
-    ))
-    box.userData.draggable = true
-    box.userData.name = 'box'
-    scene.add(box)
+    // const box = new THREE.Mesh(new THREE.BoxGeometry(2, 2, 2), new THREE.MeshStandardMaterial(
+    //     { color: "green", }
+    // ))
+    // box.userData.draggable = true
+    // box.userData.name = 'box'
+    // scene.add(box)
 
     
+    //3d model
 
+    
+    
 
     // const boxSphere = new THREE.Group()
 
@@ -66,7 +67,6 @@ const First_animation = () => {
     // light
 
     const light = new THREE.PointLight("white", 60000)
-    light.castShadow = true
     light.position.set(0, 100, 10)
     scene.add(light)
 
@@ -100,7 +100,7 @@ const First_animation = () => {
 
     //bot
 
-    const robot = bot(5, 2, 4, -10, 5, 0, 3, 1.3, 5, physics_world, scene)
+    const robot = bot(5, 2, 3.99, -10, 5, 0, 3, 1.3, 5, physics_world, scene)
 
     robot.addToWorld(physics_world)
     botAddToScene(scene)
@@ -214,8 +214,9 @@ const First_animation = () => {
         // box.position.copy(boxBody.position)
         // box.quaternion.copy(boxBody.quaternion)
         botRender()
+        
         // const [distance,angle] = distanceFromBot(box)
-        pickedObject()
+        // pickedObject(robotModel)
         requestAnimationFrame(animate)
         renderer.render(scene, camera)
     }

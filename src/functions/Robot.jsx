@@ -1,5 +1,6 @@
 import * as cannon from 'cannon-es'
 import * as THREE from 'three'
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 
 let wheelL = null, wheelR = null
 let wheel_R = null
@@ -12,7 +13,8 @@ function botBody(w, h, d, px, py, pz, m) {
     botBody_ = new cannon.Body({
         mass: m,
         position: new cannon.Vec3(px, py, pz),
-        shape: new cannon.Box(new cannon.Vec3(w / 2, h / 2, d / 2))
+        shape: new cannon.Box(new cannon.Vec3(w / 2, h / 2, d / 2)),
+
     })
 
     return botBody_
@@ -28,24 +30,23 @@ export function bot(w, h, d, px, py, pz, m, radius, wheel_mass, physics_world, r
 
     wheelL = wheel(radius, wheel_mass)
     wheelR = wheel(radius, wheel_mass)
-    botBodyShape = bodyShape(w, h, d)
     wheel_R = radius
 
     chassis.addWheel({
         body: wheelR,
-        position: new cannon.Vec3(-1, 0, d / 2),
+        position: new cannon.Vec3(-0.8, -0.5, d / 2 + 0.2),
         axis: new cannon.Vec3(0, 0, 1)
     })
 
     chassis.addWheel({
         body: wheelL,
-        position: new cannon.Vec3(-1, 0, -d / 2),
+        position: new cannon.Vec3(-0.8, -0.5, -d / 2 - 0.2),
         axis: new cannon.Vec3(0, 0, 1)
     })
 
     chassis.addWheel({
         body: wheel(radius, 1),
-        position: new cannon.Vec3(2.1, 0, 0),
+        position: new cannon.Vec3(2.1, -0.5, 0),
         axis: new cannon.Vec3(0, 0, 0),
 
     })
@@ -100,7 +101,7 @@ export function controlBot(robot, input) {
 }
 
 
-function wheelShape(){
+function wheelShape() {
     const wheelBody = new THREE.Mesh(new THREE.SphereGeometry(wheel_R), new THREE.MeshStandardMaterial({
         color: "white",
     }))
@@ -108,45 +109,69 @@ function wheelShape(){
     return wheelBody
 }
 
-function bodyShape(w, h, d){
-    const body = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), new THREE.MeshStandardMaterial({
-        color: "white",
-    }))
+export function botAddToScene(render_world) {
 
-    return body
+    const model = new GLTFLoader()
+
+    model.load('/3d_models/TuFu.glb', (body) => {
+        render_world.add(body.scene)
+
+        botBodyShape = body.scene
+    }, undefined, function (error) {
+
+        console.error(error)
+
+    })
+
+    model.load('/3d_models/TuFu_wheel.glb', (wheel) => {
+        render_world.add(wheel.scene)
+
+        wheelShapeL = wheel.scene
+
+    }, undefined, function (error) {
+
+        console.error(error)
+
+    })
+
+    model.load('/3d_models/TuFu_wheel.glb', (wheel) => {
+        render_world.add(wheel.scene)
+
+        wheelShapeR = wheel.scene
+
+    }, undefined, function (error) {
+
+        console.error(error)
+
+    })
+
 }
 
-export function botAddToScene(render_world){
+export function botRender() {
 
-    wheelShapeL = wheelShape()
-    wheelShapeR = wheelShape() 
+    if (wheelShapeL && wheelShapeR && botBodyShape) {
 
-    render_world.add(wheelShapeL)
-    render_world.add(wheelShapeR)
-    render_world.add(botBodyShape)
+        wheelShapeL.position.copy(wheelL.position)
+        wheelShapeL.quaternion.copy(wheelL.quaternion)
+        wheelShapeR.position.copy(wheelR.position)
+        wheelShapeR.quaternion.copy(wheelR.quaternion)
+
+        botBodyShape.position.copy(botBody_.position)
+        botBodyShape.quaternion.copy(botBody_.quaternion)
+
+    }
 
 }
 
-export function botRender(){
 
-    wheelShapeL.position.copy(wheelL.position)
-    wheelShapeL.quaternion.copy(wheelL.quaternion)
-    wheelShapeR.position.copy(wheelR.position)
-    wheelShapeR.quaternion.copy(wheelR.quaternion)
-
-    botBodyShape.position.copy(botBody_.position)
-    botBodyShape.quaternion.copy(botBody_.quaternion)
-}
-
-
-export function distanceFromBot(body){
+export function distanceFromBot(body) {
     const distance = Math.sqrt(
-        Math.abs(body.position.x-botBody_.position.x) + 
-        Math.abs(body.position.z-botBody_.position.z))
+        Math.abs(body.position.x - botBody_.position.x) +
+        Math.abs(body.position.z - botBody_.position.z))
 
     const angle = (Math.atan2(
-        (body.position.z-botBody_.position.z),
-        (body.position.x-botBody_.position.x))*180)/Math.PI
-    
+        (body.position.z - botBody_.position.z),
+        (body.position.x - botBody_.position.x)) * 180) / Math.PI
+
     return [distance, angle]
 }
