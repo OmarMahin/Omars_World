@@ -2,7 +2,7 @@ import React from 'react'
 import * as THREE from 'three'
 import * as CANNON from 'cannon-es'
 import CannonDebugger, * as C_DEBUGGER from 'cannon-es-debugger'
-import { bot, controlBot, botAddToScene, botRender, distanceFromBot } from '../functions/Robot.jsx'
+import { bot, controlBot, botAddToScene, botRender, target_pick_drop } from '../functions/Robot.jsx'
 
 import { ball, render_Ball } from '../functions/Ball.jsx'
 import { Vector3 } from 'three'
@@ -40,8 +40,20 @@ const First_animation = () => {
     scene.add(ground)
 
     //plane
-    
+
     const plane = new THREE.Plane(new Vector3(0, 1, 0), 0)
+
+    //target_sphere
+
+    const target_sphere = new THREE.Mesh(new THREE.SphereGeometry(1), new THREE.MeshBasicMaterial({
+        transparent: false,
+        color: 'green'
+    }))
+
+    target_sphere.userData.draggable = false
+    target_sphere.userData.name = 'Target'
+    target_sphere.position.set(0,1.5,0)
+    scene.add(target_sphere)
 
     // light
 
@@ -67,7 +79,7 @@ const First_animation = () => {
     })
 
     //creating ground plane
-
+    // const groundPhyMat = new CANNON.
     const groundBody = new CANNON.Body({
         type: CANNON.Body.STATIC,
         shape: new CANNON.Plane(),
@@ -79,17 +91,16 @@ const First_animation = () => {
 
     //bot
 
-    const robot = bot(5, 2, 3.99, -10, 5, 0, 7, 1.3, 5)
+    const robot = bot(5, 2, 3.99, -10, 5, -10, 7, 1.3, 5)
 
     robot.addToWorld(physics_world)
     botAddToScene(scene)
 
-    controlBot(robot, 'S')
+    // controlBot(robot, 'S')
 
 
 
-    const [physics_ball, ball_body] = ball(physics_world, scene, 0, 10, 0)
-
+    const [physics_ball, ball_body, positionBall] = ball(physics_world, scene, 0, 10, 0)
 
 
     //render
@@ -178,7 +189,7 @@ const First_animation = () => {
             let intersects = new THREE.Vector3()
             raycaster.ray.intersectPlane(plane, intersects)
 
-            ball_body.position.set(intersects.x, intersects.y, intersects.z)
+            ball_body.position.set(intersects.x, y_pos, intersects.z)
 
 
         }
@@ -188,6 +199,8 @@ const First_animation = () => {
 
     const c_debug = new CannonDebugger(scene, physics_world, {})
 
+    
+
     const animate = () => {
 
         physics_world.fixedStep()
@@ -196,7 +209,7 @@ const First_animation = () => {
         render_Ball()
         botRender()
 
-        // const [distance,angle] = distanceFromBot(box)
+        target_pick_drop(positionBall, target_sphere, robot)
         pickedObject()
         requestAnimationFrame(animate)
         renderer.render(scene, camera)
