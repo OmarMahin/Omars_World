@@ -11,8 +11,24 @@ let front_pointSphere1 = null, front_pointSphere2 = null
 let botBody_ = null
 let botBodyShape = null
 let side = null
-let init_targetPos = null
-let f = false
+const init_targetPos = new THREE.Vector2(0, 0)
+let rotate = true
+let forward = false
+let wheelPhyMat = null
+let groundPhyMat = null
+let speed = 0
+
+export function groundPhyBody(physics_world) {
+    groundPhyMat = new cannon.Material()
+    const groundBody = new cannon.Body({
+        type: cannon.Body.STATIC,
+        shape: new cannon.Plane(),
+        material: groundPhyMat
+    })
+
+    groundBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0)
+    physics_world.addBody(groundBody)
+}
 
 
 function botBody(w, h, d, px, py, pz, m) {
@@ -85,48 +101,44 @@ export function bot(w, h, d, px, py, pz, m, radius, wheel_mass, physics_world, r
 
 function wheel(radius, wheel_mass) {
 
+    wheelPhyMat = new cannon.Material()
     const body = new cannon.Body({
         mass: wheel_mass,
         shape: new cannon.Sphere(radius),
-        material: new cannon.Material('wheel'),
+        material: wheelPhyMat,
 
     })
 
-    body.angularDamping = 0.4
+    body.angularDamping = 0.5
+    // body.linearDamping = 0.31
 
     return body
 }
 
 
-export function controlBot(robot, input, speed) {
+export function controlBot(robot, input, speed, r1, r0) {
     if (input == 'F') {
         robot.setWheelForce(-speed, 1)
         robot.setWheelForce(-speed, 0)
-        // robot.setMotorSpeed(speed,0)
-        // robot.setMotorSpeed(speed, 1)
+
     }
 
     else if (input == 'L') {
         robot.setWheelForce(speed, 1)//left wheel
         robot.setWheelForce(-speed, 0)//right wheel
-        // robot.setMotorSpeed(speed,0)//left wheel
-        // robot.setMotorSpeed(0, 1)//right wheel
+
     }
 
     else if (input == 'R') {
-        // robot.setMotorSpeed(0, 0)//left wheel
-        // robot.setMotorSpeed(1000, 1)//right wheel
-        // // robot.applyWheelForce(1,1)
+
         robot.setWheelForce(-speed, 1)//left wheel
         robot.setWheelForce(speed, 0)//right wheel
 
     }
 
     else if (input == 'S') {
-        robot.setWheelForce(0, 1)//left wheel
-        robot.setWheelForce(0, 0)//right wheel
-        robot.setMotorSpeed(0.5, 0)//left wheel
-        robot.setMotorSpeed(0.5, 1)//right wheel
+        robot.setWheelForce(-r1 * Math.abs(speed) * 10, 1)//left wheel
+        robot.setWheelForce(-r0 * Math.abs(speed) * 10, 0)//right wheel
 
     }
 }
@@ -175,7 +187,6 @@ export function botAddToScene(render_world) {
         console.error(error)
 
     })
-
 }
 
 export function botRender() {
@@ -241,6 +252,9 @@ export function distanceFromBot(body) {
 
 
 export function target_pick_drop(target, target_pos, robot) {
+    const null_pos = new THREE.Vector2(0, 0)
+    const pos = new THREE.Vector2(target.position.x, target.position.z)
+    
     const threshold = 2.5
     const distance = Math.sqrt(
         Math.abs(target_pos.position.x - target.position.x) +
@@ -251,39 +265,81 @@ export function target_pick_drop(target, target_pos, robot) {
     }
     else {
 
-        if (!init_targetPos) init_targetPos = target_pos
-        const targetDistance1 = front_pointSphere1.position.distanceTo(target.position)
-        const targetDistance2 = front_pointSphere2.position.distanceTo(target.position)
-        const targetDistance3 = casterWheel.position.distanceTo(target.position)
 
-        if (!side) side = randInt(1, 2)
+        if (init_targetPos.equals(null_pos)) {
+            init_targetPos.copy(pos)
+        }
+        console.log(init_targetPos.distanceTo(pos))
 
-        if (side == 1) {
-            if ((Math.abs(targetDistance1 - targetDistance2) > 0.4)) {
-                controlBot(robot, 'R', 5)
-
+        if (init_targetPos.distanceTo(pos) > 1) {
+            if (Math.abs(robot.getWheelSpeed(0)) < 0.01 || Math.abs(robot.getWheelSpeed(0)) < 0.01) {
+                // console.log("new")
+                init_targetPos.copy(pos)
+                controlBot(robot, 'S', speed, 0, 0)
+                side = side = randInt(1, 2)
+                rotate = true
+                forward = false
+            }
+            else {
+                controlBot(robot, 'S', -speed, robot.getWheelSpeed(1), robot.getWheelSpeed(0))
             }
 
-            else if (targetDistance1 < targetDistance3) {
-                controlBot(robot, 'S', -10)
-                // f = true
-            }
         }
 
-        else if (side == 2) {
-            if ((Math.abs(targetDistance1 - targetDistance2) > 0.4)) {
-                controlBot(robot, 'L', 5)
+        else {
 
+            const targetDistance1 = front_pointSphere1.position.distanceTo(target.position)
+            const targetDistance2 = front_pointSphere2.position.distanceTo(target.position)
+            const targetDistance3 = casterWheel.position.distanceTo(target.position)
+
+            if (!side) side = randInt(1, 2)
+            speed = 5
+            if (side == 1) {
+                if ((Math.abs(targetDistance1 - targetDistance2) > 0.9) && rotate) {
+                    controlBot(robot, 'R', speed)
+                }
+
+                else if (targetDistance1 < targetDistance3 || rotate == false) {
+                    rotate = false
+                    controlBot(robot, 'S', -speed, robot.getWheelSpeed(1), robot.getWheelSpeed(0))
+
+
+                }
             }
 
-            else if (targetDistance1 < targetDistance3) {
-                controlBot(robot, 'S', -10)
-                // f = true
+            else if (side == 2) {
+                if ((Math.abs(targetDistance1 - targetDistance2) > 0.9) && rotate) {
+                    controlBot(robot, 'L', speed)
+                }
+
+                else if (targetDistance1 < targetDistance3 || rotate == false) {
+                    rotate = false
+                    controlBot(robot, 'S', -speed, robot.getWheelSpeed(1), robot.getWheelSpeed(0))
+
+                }
             }
+
+            if (Math.abs(robot.getWheelSpeed(0)) < 0.01 && rotate == false) {
+                forward = true
+                rotate = false
+                speed = 10
+                // side = randInt(1, 2)
+            }
+
+            if (forward && !rotate){
+                controlBot(robot,'F', speed)
+            }
+
         }
+
+
+
+        // if (forward && !rotate){
+        //     controlBot(robot, 'F', 20)
+        //     console.log("Ye?")
+        // }
 
         // if (f) controlBot(robot, 'F' , 200)
-        console.log(targetDistance1 + ' ' + targetDistance3)
     }
 
 }

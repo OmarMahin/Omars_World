@@ -2,7 +2,7 @@ import React from 'react'
 import * as THREE from 'three'
 import * as CANNON from 'cannon-es'
 import CannonDebugger, * as C_DEBUGGER from 'cannon-es-debugger'
-import { bot, controlBot, botAddToScene, botRender, target_pick_drop } from '../functions/Robot.jsx'
+import {groundPhyBody, bot, controlBot, botAddToScene, botRender, target_pick_drop } from '../functions/Robot.jsx'
 
 import { ball, render_Ball } from '../functions/Ball.jsx'
 import { Vector3 } from 'three'
@@ -79,22 +79,23 @@ const First_animation = () => {
     })
 
     //creating ground plane
-    // const groundPhyMat = new CANNON.
-    const groundBody = new CANNON.Body({
-        type: CANNON.Body.STATIC,
-        shape: new CANNON.Plane(),
-    })
+    groundPhyBody(physics_world)
 
+    // const staticCube = new CANNON.Body({
+    //     type: CANNON.Body.STATIC,
+    //     shape: new CANNON.Box(1,1,1),
+    //     position: new CANNON.Vec3(0,1,0)
 
-    groundBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0)
-    physics_world.addBody(groundBody)
+    // })
+
+    
 
     //bot
 
     const robot = bot(5, 2, 3.99, -10, 5, -10, 7, 1.3, 5)
 
     robot.addToWorld(physics_world)
-    botAddToScene(scene)
+    botAddToScene(scene, physics_world)
 
     // controlBot(robot, 'S')
 
