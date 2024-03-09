@@ -45,9 +45,10 @@ const First_animation = () => {
 
     //target_sphere
 
-    const target_sphere = new THREE.Mesh(new THREE.SphereGeometry(1), new THREE.MeshBasicMaterial({
-        transparent: false,
-        color: 'green'
+    const target_sphere = new THREE.Mesh(new THREE.SphereGeometry(0.5), new THREE.MeshBasicMaterial({
+        transparent: true,
+        color: 'green',
+        opacity: 0,
     }))
 
     target_sphere.userData.draggable = false
@@ -81,14 +82,6 @@ const First_animation = () => {
     //creating ground plane
     groundPhyBody(physics_world)
 
-    // const staticCube = new CANNON.Body({
-    //     type: CANNON.Body.STATIC,
-    //     shape: new CANNON.Box(1,1,1),
-    //     position: new CANNON.Vec3(0,1,0)
-
-    // })
-
-    
 
     //bot
 
