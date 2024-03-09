@@ -10,7 +10,7 @@ let wheelShapeL = null, wheelShapeR = null
 let casterWheel = null
 let front_pointSphere1 = null, front_pointSphere2 = null
 let botBody_ = null, botBodyShape = null, botBodyShapeWithTarget = null
-
+const distanceDiffThreshold = 0.7
 
 let side = null
 const targetPosition = new THREE.Vector2(0, 0)
@@ -42,7 +42,7 @@ function botBody(w, h, d, px, py, pz, m) {
 
     })
 
-    botBody_.quaternion.setFromEuler(0, -Math.PI / 2, 0)
+    botBody_.quaternion.setFromEuler(0, -Math.PI/4, 0)
 
     return botBody_
 
@@ -215,7 +215,7 @@ export function botRender() {
             botBodyShapeWithTarget.visible = true
             botBodyShape.visible = false
         }
-        else{
+        else {
             botBodyShapeWithTarget.visible = false
             botBodyShape.visible = true
         }
@@ -227,7 +227,7 @@ export function botRender() {
         botBodyShape.position.copy(botBody_.position)
         botBodyShape.quaternion.copy(botBody_.quaternion)
 
-        
+
 
 
     }
@@ -318,11 +318,22 @@ export function target_pick_drop(target, target_pos, robot) {
                 botMovement(target, robot)
             }
             else if (destinationReached && !setDestination2) {
-                controlBot(robot, 'S', speed, robot.getWheelSpeed(1), robot.getWheelSpeed(0))
+                if (timeStamp == 0){
+                    controlBot(robot, 'S', speed, robot.getWheelSpeed(1), robot.getWheelSpeed(0))
                 changeBallPostion(target_pos.position, true, true, false)
-
+                timeStamp += 1
+                }
+                
+                else if (timeStamp < 200){
+                    controlBot(robot, 'F', speed)
+                    timeStamp += 1
+                }
+                else{
+                    controlBot(robot, 'S', speed, robot.getWheelSpeed(1), robot.getWheelSpeed(0))
+                }
                 if (Math.abs(robot.getWheelSpeed(0)) < 0.01 && Math.abs(robot.getWheelSpeed(1)) < 0.01) {
                     setDestination2 = true
+                    timeStamp = 0
                 }
             }
 
@@ -382,19 +393,25 @@ export function target_pick_drop(target, target_pos, robot) {
 
 function botMovement(target, robot) {
 
-
+    
     const targetDistance1 = front_pointSphere1.position.distanceTo(target.position)
     const targetDistance2 = front_pointSphere2.position.distanceTo(target.position)
     const targetDistance3 = casterWheel.position.distanceTo(target.position)
+    // console.log(targetDistance3 - targetDistance2 + ' ' + rotate + ' ' + forward)
 
     if (!side) side = calculateSide(target)
     speed = 5
     if (side == 1) {
-        if ((Math.abs(targetDistance1 - targetDistance2) > 0.6) && rotate) {
+        if ((Math.abs(targetDistance1 - targetDistance2) > distanceDiffThreshold) && rotate) {
+            controlBot(robot, 'R', speed)
+
+        }
+
+        else if ((Math.abs(targetDistance1 - targetDistance2) <= distanceDiffThreshold) && rotate && (targetDistance3 - targetDistance1) < -1){
             controlBot(robot, 'R', speed)
         }
 
-        else if (targetDistance1 < targetDistance3 || rotate == false) {
+        else if ((targetDistance3 - targetDistance1) > 0 || rotate == false) {
             rotate = false
             controlBot(robot, 'S', -speed, robot.getWheelSpeed(1), robot.getWheelSpeed(0))
 
@@ -403,11 +420,14 @@ function botMovement(target, robot) {
     }
 
     else if (side == 2) {
-        if ((Math.abs(targetDistance1 - targetDistance2) > 0.6) && rotate) {
+        if ((Math.abs(targetDistance1 - targetDistance2) > distanceDiffThreshold) && rotate) {
+            controlBot(robot, 'L', speed)
+        }
+        else if ((Math.abs(targetDistance1 - targetDistance2) <= distanceDiffThreshold) && rotate && (targetDistance3 - targetDistance1) < -1){
             controlBot(robot, 'L', speed)
         }
 
-        else if (targetDistance1 < targetDistance3 || rotate == false) {
+        else if ((targetDistance3 - targetDistance1) > 0 || rotate == false) {
             rotate = false
             controlBot(robot, 'S', -speed, robot.getWheelSpeed(1), robot.getWheelSpeed(0))
 
@@ -418,14 +438,16 @@ function botMovement(target, robot) {
         forward = true
         rotate = false
 
+
     }
 
     if (forward && !rotate) {
         speed = 10
 
-        if (Math.abs(targetDistance1 - targetDistance2) > 0.6) {
+        if (Math.abs(targetDistance1 - targetDistance2) > distanceDiffThreshold || ((targetDistance3 - targetDistance2) < -1)) {
             controlBot(robot, 'S', speed, robot.getWheelSpeed(1), robot.getWheelSpeed(0))
             if (Math.abs(robot.getWheelSpeed(0)) < 0.01 && Math.abs(robot.getWheelSpeed(1)) < 0.01) {
+                console.log("Ws here")
                 side = calculateSide(target)
                 forward = false
                 rotate = true
@@ -433,6 +455,7 @@ function botMovement(target, robot) {
         }
         else {
             controlBot(robot, 'F', speed)
+            rotate = false
         }
 
         if (targetDistance3 < 4) {

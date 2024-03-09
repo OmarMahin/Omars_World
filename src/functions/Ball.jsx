@@ -22,7 +22,7 @@ export function ball(physics_world, render_world, px, py, pz) {
 
     targetBody = new THREE.Mesh(new THREE.SphereGeometry(0.25), new MeshStandardMaterial({
         transparent: true,
-        opacity: 0
+        opacity: 0,
     }))
     targetBody.userData.draggable = false
 
@@ -45,7 +45,7 @@ export function ball(physics_world, render_world, px, py, pz) {
 
 export function changeBallPostion(newPos, transparent, physicsBody, renderBody) {
     if (physicsBody) physics_body.position.copy(newPos)
-    if (renderBody) render_body.position.copy(physics_body)
+    if (renderBody) render_body.position.copy(physics_body.position)
     if (transparent) {
         render_body.material.opacity = 0
     }

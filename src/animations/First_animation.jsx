@@ -25,13 +25,13 @@ const First_animation = () => {
     //axis
 
     const axis = new THREE.AxesHelper(8)
-    scene.add(axis)
+    // scene.add(axis)
 
     //shape
 
     //ground
     const ground = new THREE.Mesh(new THREE.BoxGeometry(100, 1, 100), new THREE.MeshStandardMaterial(
-        { color: "black", }//d1d1d1
+        { color: "d1d1d1", }//d1d1d1
     ))
     ground.name = 'ground'
     ground.position.y = -1
@@ -48,17 +48,17 @@ const First_animation = () => {
     const target_sphere = new THREE.Mesh(new THREE.SphereGeometry(0.5), new THREE.MeshBasicMaterial({
         transparent: true,
         color: 'green',
-        opacity: 0,
+        opacity: 1,
     }))
 
     target_sphere.userData.draggable = false
     target_sphere.userData.name = 'Target'
-    target_sphere.position.set(0,1.5,0)
+    target_sphere.position.set(0,1,0)
     scene.add(target_sphere)
 
     // light
 
-    const light = new THREE.PointLight("white", 60000)
+    const light = new THREE.PointLight("white", 100000)
     light.position.set(0, 100, 10)
     scene.add(light)
 
@@ -85,8 +85,8 @@ const First_animation = () => {
 
     //bot
 
-    const robot = bot(5, 2, 3.99, -10, 5, -10, 7, 1.3, 5)
-
+    const robot = bot(5, 2, 3.99, -10, 2, 0, 7, 1.3, 5)
+    console.log(robot)
     robot.addToWorld(physics_world)
     botAddToScene(scene, physics_world)
 
@@ -94,7 +94,7 @@ const First_animation = () => {
 
 
 
-    const [physics_ball, ball_body, positionBall] = ball(physics_world, scene, 0, 10, 0)
+    const [physics_ball, ball_body, positionBall] = ball(physics_world, scene, 0, 3, 0)
 
 
     //render
@@ -196,7 +196,6 @@ const First_animation = () => {
     
 
     const animate = () => {
-
         physics_world.fixedStep()
         // c_debug.update() //physics debugger
 
