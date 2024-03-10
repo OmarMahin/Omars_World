@@ -119,7 +119,7 @@ opacity: 0}//d1d1d1
 
         camera.aspect = sizes.width / sizes.height
         camera.updateProjectionMatrix()
-        renderer.setSize(sizes.width, sizes.height)
+        renderer.setSize(sizes.width, sizes.height, false)
     })
 
 
