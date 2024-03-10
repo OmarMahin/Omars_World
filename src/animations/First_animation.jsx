@@ -20,7 +20,6 @@ const First_animation = () => {
     //Scene
 
     const scene = new THREE.Scene()
-    scene.background = new THREE.Color("#E5E1DA")//
 
     //axis
 
@@ -31,13 +30,15 @@ const First_animation = () => {
 
     //ground
     const ground = new THREE.Mesh(new THREE.BoxGeometry(100, 1, 100), new THREE.MeshStandardMaterial(
-        { color: "d1d1d1", }//d1d1d1
+        { color: "d1d1d1", 
+    transparent: true,
+opacity: 0}//d1d1d1
     ))
     ground.name = 'ground'
     ground.position.y = -1
     ground.userData.draggable = false
     ground.userData.name = 'ground'
-    scene.add(ground)
+    // scene.add(ground)
 
     //plane
 
@@ -58,9 +59,13 @@ const First_animation = () => {
 
     // light
 
-    const light = new THREE.PointLight("white", 100000)
-    light.position.set(0, 100, 10)
+    const light = new THREE.DirectionalLight( '#EDEDED', 2.5)
+    light.position.set(0, 100, 0)
     scene.add(light)
+
+    const light2 = new THREE.HemisphereLight( 'white', 'white', 1 )
+    light2.position.set(0, 100, 0)
+    scene.add(light2)
 
     //camera
 
@@ -100,7 +105,8 @@ const First_animation = () => {
     //render
 
     const canvas = document.querySelector(".webgl")
-    const renderer = new THREE.WebGLRenderer({ canvas })
+    const renderer = new THREE.WebGLRenderer({ canvas: canvas,
+    alpha: true })
 
     renderer.setSize(sizes.width, sizes.height)
     renderer.render(scene, camera)
