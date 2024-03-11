@@ -7,7 +7,14 @@ export default {
   theme: {
     extend: {
       colors:{
-        'backgroundColor' : '#EDEDED',
+        'backgroundColor' : '#EDE8E8',
+        'fontColor' : '#1E1E1E',
+        'secondaryColor' : '#1B1B1B'
+      },
+      fontFamily:{
+        mainHeading: ['Josefin Sans'],
+        subHeading: ['Langar'],
+        mainFont: ['Istok Web'],
       }
     },
   },
