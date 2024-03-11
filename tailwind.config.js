@@ -15,6 +15,9 @@ export default {
         mainHeading: ['Josefin Sans'],
         subHeading: ['Langar'],
         mainFont: ['Istok Web'],
+      },
+      maxWidth: {
+        conatiner: '1150px',
       }
     },
   },
