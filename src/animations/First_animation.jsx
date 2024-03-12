@@ -1,8 +1,9 @@
 import React from 'react'
 import * as THREE from 'three'
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import * as CANNON from 'cannon-es'
 import CannonDebugger, * as C_DEBUGGER from 'cannon-es-debugger'
-import {groundPhyBody, bot, controlBot, botAddToScene, botRender, target_pick_drop } from '../functions/Robot.jsx'
+import {groundPhyBody, bot, controlBot, botAddToScene, botRender, target_pick_drop, addRenderRobotBodyParts } from '../functions/Robot.jsx'
 
 import { ball, render_Ball } from '../functions/Ball.jsx'
 import { Vector3 } from 'three'
@@ -11,19 +12,10 @@ import { useState } from 'react'
 
 
 
+
+
 const First_animation = () => {
-
-    let [elementPos, setElementPos] = useState()
-
-    useEffect(()=>{
-        const pos = document.getElementById("target_pos")
-        if (!elementPos){
-            setElementPos(pos)
-        }
-
-    },[])
     
-
     const sizes = {
         width: 1150,
         height: 600,
@@ -87,16 +79,51 @@ const First_animation = () => {
 
 
     //bot
+    let robot = null
+    const loadManager = new THREE.LoadingManager()
+    const model = new GLTFLoader(loadManager)
 
-    const robot = bot(5, 2, 3.99, -10, 2, 0, 7, 1.3, 5)
-    robot.addToWorld(physics_world)
-    botAddToScene(scene, physics_world)
+    loadManager.onProgress = (url,items,number)=>{
+        console.log( 'Loading file: ' + url + '.\nLoaded ' + items + ' of ' + number + ' files.' )
+    }
+
+    
+    let botBody = null, botWithBall = null, botWheelL = null, botWheelR = null
+
+    model.load('/3d_models/TuFu.glb', (body)=>{botBody = body.scene}, ()=>{})
+    model.load('/3d_models/TuFu_Ball.glb', (body)=>{botWithBall = body.scene
+    // botWithBall.position.set(0,-10,0)
+    // scene.add(botWithBall)
+}, ()=>{})
+    model.load('/3d_models/TuFu_wheel.glb', (body)=>{botWheelL = body.scene}, ()=>{})
+    model.load('/3d_models/TuFu_wheel.glb', (body)=>{botWheelR = body.scene}, ()=>{})
+    
+
+    loadManager.onLoad = ()=>{
+        robot = bot(5, 2, 3.99, -10, 2, 0, 7, 1.3, 5)
+        robot.addToWorld(physics_world)
+        addRenderRobotBodyParts(botBody, botWithBall, botWheelL, botWheelR, scene)
+        console.log("Complete")
+        console.log(botWheelR)
+        
+    }
+
+    loadManager.onError = function ( url ) {
+        console.log( 'There was an error loading ' + url );
+    };
+    
+
+    
+
+    // const robot = bot(5, 2, 3.99, -10, 2, 0, 7, 1.3, 5)
+    // robot.addToWorld(physics_world)
+    // botAddToScene(scene, physics_world)
 
     // controlBot(robot, 'S')
 
 
 
-    const [physics_ball, ball_body, positionBall] = ball(physics_world, scene, 5,1+1,3.12)
+    // const [physics_ball, ball_body, positionBall] = ball(physics_world, scene, 5,1+1,3.12)
 
 
     //render
@@ -144,117 +171,117 @@ const First_animation = () => {
     let picked = false
     let y_pos = null
 
-    window.addEventListener('mousedown', (e) => {
+    // window.addEventListener('mousedown', (e) => {
 
-        const lL = window.innerWidth/2 - 1150/2
-        const hL = window.innerWidth/2 + 1150/2
+    //     const lL = window.innerWidth/2 - 1150/2
+    //     const hL = window.innerWidth/2 + 1150/2
 
-        const lL_y = 0
-        const hL_y = 600
+    //     const lL_y = 0
+    //     const hL_y = 600
 
-        if (e.clientX >= lL && e.clientX <= hL){
-            const posX = e.clientX - lL
+    //     if (e.clientX >= lL && e.clientX <= hL){
+    //         const posX = e.clientX - lL
 
-            mouse.x = (posX / 1150) * 2 - 1
-        }
-        else{
-            mouse.x = (mouse.x) < 0 ? -1 : 1
-        }
+    //         mouse.x = (posX / 1150) * 2 - 1
+    //     }
+    //     else{
+    //         mouse.x = (mouse.x) < 0 ? -1 : 1
+    //     }
 
-        if (e.clientY >= lL_y && e.clientY <= hL_y){
-            const posY = e.clientY - lL_y
+    //     if (e.clientY >= lL_y && e.clientY <= hL_y){
+    //         const posY = e.clientY - lL_y
 
-            mouse.y = -(posY / 600) * 2 + 1
-        }
-        else{
-            mouse.y = (mouse.y) < 0 ? -1 : 1
-        }
+    //         mouse.y = -(posY / 600) * 2 + 1
+    //     }
+    //     else{
+    //         mouse.y = (mouse.y) < 0 ? -1 : 1
+    //     }
 
-        raycaster.setFromCamera(mouse, camera)
+    //     raycaster.setFromCamera(mouse, camera)
 
-        objects = raycaster.intersectObjects(scene.children)
+    //     objects = raycaster.intersectObjects(scene.children)
 
-        console.log(objects)
+    //     console.log(objects)
 
-        if (objects.length > 0 && objects[0].object.userData.draggable) {
-            y_pos = objects[0].object.position.y
-            picked = true
-        }
+    //     if (objects.length > 0 && objects[0].object.userData.draggable) {
+    //         y_pos = objects[0].object.position.y
+    //         picked = true
+    //     }
 
-    })
+    // })
 
-    //letting the object drop
+    // //letting the object drop
 
-    window.addEventListener('mouseup', (e) => {
-        if (picked) {
-            picked = false
-            ball_body.position.y = 5
-            physics_ball.position.copy(ball_body.position)
-            physics_ball.quaternion.copy(ball_body.quaternion)
-        }
-    })
+    // window.addEventListener('mouseup', (e) => {
+    //     if (picked) {
+    //         picked = false
+    //         ball_body.position.y = 5
+    //         physics_ball.position.copy(ball_body.position)
+    //         physics_ball.quaternion.copy(ball_body.quaternion)
+    //     }
+    // })
 
-    //dragging the object
+    // //dragging the object
 
-    window.addEventListener('mousemove', (e) => {
+    // window.addEventListener('mousemove', (e) => {
 
-        const past_mouseMove_x = mouseMove.x
-        const past_mouseMove_y = mouseMove.y
+    //     const past_mouseMove_x = mouseMove.x
+    //     const past_mouseMove_y = mouseMove.y
 
-        // mouseMove.x = (e.clientX / sizes.width) * 2 - 1;
-        // mouseMove.y = - (e.clientY / window.innerHeight) * 2 + 1;
+    //     // mouseMove.x = (e.clientX / sizes.width) * 2 - 1;
+    //     // mouseMove.y = - (e.clientY / window.innerHeight) * 2 + 1;
 
-        const lL = window.innerWidth/2 - 1150/2
-        const hL = window.innerWidth/2 + 1150/2
+    //     const lL = window.innerWidth/2 - 1150/2
+    //     const hL = window.innerWidth/2 + 1150/2
 
-        const lL_y = 0
-        const hL_y = 600
+    //     const lL_y = 0
+    //     const hL_y = 600
 
-        if (e.clientX >= lL && e.clientX <= hL){
-            const posX = e.clientX - lL
+    //     if (e.clientX >= lL && e.clientX <= hL){
+    //         const posX = e.clientX - lL
 
-            mouseMove.x = (posX / 1150) * 2 - 1
-        }
-        else{
-            mouseMove.x = (mouseMove.x) < 0 ? -1 : 1
-        }
+    //         mouseMove.x = (posX / 1150) * 2 - 1
+    //     }
+    //     else{
+    //         mouseMove.x = (mouseMove.x) < 0 ? -1 : 1
+    //     }
 
-        if (e.clientY >= lL_y && e.clientY <= hL_y){
-            const posY = e.clientY - lL_y
+    //     if (e.clientY >= lL_y && e.clientY <= hL_y){
+    //         const posY = e.clientY - lL_y
 
-            mouseMove.y = -(posY / 600) * 2 + 1
-        }
-        else{
-            mouseMove.y = (mouseMove.y) < 0 ? -1 : 1
-        }
+    //         mouseMove.y = -(posY / 600) * 2 + 1
+    //     }
+    //     else{
+    //         mouseMove.y = (mouseMove.y) < 0 ? -1 : 1
+    //     }
         
-        console.log(mouseMove.x + ' ' + mouseMove.y)
+    //     // console.log(mouseMove.x + ' ' + mouseMove.y)
 
-        if (mouseMove.x < -1 || mouseMove.x > 1) {
-            mouseMove.x = past_mouseMove_x
-        }
-        if (mouseMove.y < -1 || mouseMove.y > 1) {
-            mouseMove.y = past_mouseMove_y
-        }
+    //     if (mouseMove.x < -1 || mouseMove.x > 1) {
+    //         mouseMove.x = past_mouseMove_x
+    //     }
+    //     if (mouseMove.y < -1 || mouseMove.y > 1) {
+    //         mouseMove.y = past_mouseMove_y
+    //     }
 
-    })
+    // })
 
-    //picking object and dragging it
+    // //picking object and dragging it
 
-    let pickedObject = () => {
-        if (picked) {
-            raycaster.setFromCamera(mouseMove, camera)
-            console.log(raycaster)
-            let intersects = new THREE.Vector3()    
-            raycaster.ray.intersectPlane(plane, intersects)
+    // let pickedObject = () => {
+    //     if (picked) {
+    //         raycaster.setFromCamera(mouseMove, camera)
+    //         console.log(raycaster)
+    //         let intersects = new THREE.Vector3()    
+    //         raycaster.ray.intersectPlane(plane, intersects)
 
-            ball_body.position.set(intersects.x, y_pos, intersects.z)
+    //         ball_body.position.set(intersects.x, y_pos, intersects.z)
 
 
-        }
-    }
+    //     }
+    // }
 
-    //cannon-es-debugger
+    // //cannon-es-debugger
 
     const c_debug = new CannonDebugger(scene, physics_world, {})
 
@@ -262,19 +289,19 @@ const First_animation = () => {
 
     const animate = () => {
         physics_world.fixedStep()
-        // c_debug.update() //physics debugger
+        c_debug.update() //physics debugger
 
-        render_Ball()
+        // render_Ball()
         botRender()
         
-        target_pick_drop(positionBall, target_sphere, robot)
-        pickedObject()
+        // target_pick_drop(positionBall, target_sphere, robot)
+        // pickedObject()
         requestAnimationFrame(animate)
         renderer.render(scene, camera)
         
     }
 
-    // console.log(elementPos)
+    // // console.log(elementPos)
     animate()
 
     

@@ -151,6 +151,21 @@ function wheelShape() {
     return wheelBody
 }
 
+export function addRenderRobotBodyParts(body_without_Target,body_with_Target,wheel_L, wheel_R, render_world){
+
+    botBodyShape = body_without_Target
+    botBodyShapeWithTarget = body_with_Target
+    wheelShapeL = wheel_L
+    wheelShapeR = wheel_R
+
+    const arr = [botBodyShape, botBodyShapeWithTarget, wheelShapeL, wheelShapeR]
+    for (let i = 0; i < 4; i++){
+        render_world.add(arr[i])
+        console.log(arr[i])
+        arr[i].position.set(0,0,0)
+    }
+}
+
 export function botAddToScene(render_world) {
 
     const model = new GLTFLoader()
@@ -485,4 +500,54 @@ function calculateSide(target) {
     if (d > 0) return 2
     else if (d < 0) return 1
 
+}
+let loaded = 0
+export function loadRobotModels(){
+    
+    
+    const manager = new THREE.LoadingManager()
+    const model = new GLTFLoader(manager)
+
+    manager.onProgress = (url,items,number)=>{
+        console.log( 'Loading file: ' + url + '.\nLoaded ' + items + ' of ' + number + ' files.' )
+    }
+
+    manager.onLoad = ()=>{
+        console.log("Complete")
+    }
+
+    model.load('/3d_models/TuFu.glb', (body) => {
+        body.scene.position.set(new THREE.Vector3(0, -10, 0))
+        // render_world.add(body.scene)
+
+        // botBodyShape = body.scene
+    }, ()=>{
+        loaded += 1
+    })
+    model.load('/3d_models/TuFu_Ball.glb', (body) => {
+        body.scene.position.set(new THREE.Vector3(0, -10, 0))
+        // render_world.add(body.scene)
+
+        // botBodyShape = body.scene
+    }, ()=>{
+        loaded += 1
+    })
+
+    model.load('/3d_models/TuFu_wheel.glb', (body) => {
+        body.scene.position.set(new THREE.Vector3(0, -10, 0))
+        // render_world.add(body.scene)
+
+        // botBodyShape = body.scene
+    }, ()=>{
+        loaded += 1
+    })
+    model.load('/3d_models/TuFu_wheel.glb', (body) => {
+        body.scene.position.set(new THREE.Vector3(0, -10, 0))
+        // render_world.add(body.scene)
+
+        // botBodyShape = body.scene
+    }, ()=>{
+        loaded += 1
+    })
+    console.log(loaded)
 }
