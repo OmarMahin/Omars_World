@@ -1,32 +1,60 @@
 import React from "react";
+import { useState } from "react";
+import { useEffect } from "react";
+import { useRef } from "react";
 import Button from "./Button";
 import Container from "./Container";
 
 const Banner = () => {
+  let worldRef = useRef(null)
+  let contRef = useRef(null)
+
+  let [containerRef, setContainerRef] = useState('')
+  // let [zoom, setZoom] = useState(Math.ceil(window.devicePixelRatio*100))
+
+  // window.addEventListener('resize',()=>{
+  //   setZoom(Math.ceil(window.devicePixelRatio*100))
+  //   console.log(zoom)
+  // })
+
+  // let styles = {
+  //   transform: `scale(${1-zoom/100 == 0 ? 1 : 1+(1-zoom/100)})`,
+  // };
+
+  useEffect(()=>{
+    if (contRef)
+    { 
+      console.log(contRef.current.getBoundingClientRect().width)
+      setContainerRef(contRef.current.getBoundingClientRect().width)
+    }
+  },[])
+  
+  
   return (
-    <div class="absolute top-0 left-0 w-full pb-96 bg-backgroundColor z-20">
+    <div className="absolute top-0 left-0 w-full pb-64 bg-backgroundColor" ref = {contRef}>
       <Container>
-        <div class=" pl-[190px] mt-52">
-          <h3 class=" text-[40px] font-subHeading text-[#1B1B1B]">
+        {/* <div>{containerRef}</div> */}
+        <div className="pl-[190px] mt-52" >
+          <h3 className="text-[40px] font-subHeading text-[#1B1B1B]">
             Hi! Welcome to
           </h3>
 
-          <div class="ml-16 ">
-            <h1 class=" text-[100px] font-mainHeading text-fontColor">
-              Omar’s World
+          <div className="ml-16 ">
+            <h1 className=" text-[100px] font-mainHeading text-fontColor">
+              Omar’s W<span  ref={worldRef}>o</span>rld
             </h1>
 
-            <p class="mt-6 w-[650px] text-mainFont font-bold text-[#3C3C3C] leading-8 text-lg">
+            <p className="mt-6 w-[650px] text-mainFont font-bold text-[#3C3C3C] leading-8 text-lg">
               My name is Omar. I love to play with codes and make my own
               mechanical buddies, like the one you are seeing here, right on top
               of the word ‘World’. (
-              <span class="text-[#5B5B5B]">
+              <span className="text-[#5B5B5B]">
                 The letter ‘o’ in ‘World’ looks a bit suspicious. I wonder what
                 happens if you move it far away....
               </span>
               ) Learn more...
             </p>
-            <div class="mt-11">
+            <div className="mt-11">
               <Button text={"About me"} />
               <Button text={"About the robot"} />
             </div>

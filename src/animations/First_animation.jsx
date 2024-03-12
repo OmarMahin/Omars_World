@@ -6,39 +6,35 @@ import {groundPhyBody, bot, controlBot, botAddToScene, botRender, target_pick_dr
 
 import { ball, render_Ball } from '../functions/Ball.jsx'
 import { Vector3 } from 'three'
+import { useEffect } from 'react'
+import { useState } from 'react'
 
 
 
 const First_animation = () => {
 
+    let [elementPos, setElementPos] = useState()
+
+    useEffect(()=>{
+        const pos = document.getElementById("target_pos")
+        if (!elementPos){
+            setElementPos(pos)
+        }
+
+    },[])
+    
+
     const sizes = {
-        width: window.innerWidth,
-        height: window.innerHeight,
+        width: 1150,
+        height: 600,
 
     }
 
     //Scene
 
     const scene = new THREE.Scene()
-
-    //axis
-
-    const axis = new THREE.AxesHelper(8)
-    // scene.add(axis)
-
     //shape
 
-    //ground
-    const ground = new THREE.Mesh(new THREE.BoxGeometry(100, 1, 100), new THREE.MeshStandardMaterial(
-        { color: "d1d1d1", 
-    transparent: true,
-opacity: 0}//d1d1d1
-    ))
-    ground.name = 'ground'
-    ground.position.y = -1
-    ground.userData.draggable = false
-    ground.userData.name = 'ground'
-    // scene.add(ground)
 
     //plane
 
@@ -54,7 +50,7 @@ opacity: 0}//d1d1d1
 
     target_sphere.userData.draggable = false
     target_sphere.userData.name = 'Target'
-    target_sphere.position.set(0,1,0)
+    target_sphere.position.set(5,1,3.12)
     scene.add(target_sphere)
 
     // light
@@ -68,11 +64,13 @@ opacity: 0}//d1d1d1
     scene.add(light2)
 
     //camera
-
-    const camera = new THREE.PerspectiveCamera(45, sizes.width / sizes.height, 1, 1000)
+    let fov = 45
+    console.log(sizes.width / sizes.height)
+    const camera = new THREE.PerspectiveCamera(fov, 1150/600, 1, 1000)
     camera.position.z = 20
     camera.position.y = 20
     camera.lookAt(0, 0, 0)
+   
     scene.add(camera)
 
 
@@ -91,7 +89,6 @@ opacity: 0}//d1d1d1
     //bot
 
     const robot = bot(5, 2, 3.99, -10, 2, 0, 7, 1.3, 5)
-    console.log(robot)
     robot.addToWorld(physics_world)
     botAddToScene(scene, physics_world)
 
@@ -99,7 +96,7 @@ opacity: 0}//d1d1d1
 
 
 
-    const [physics_ball, ball_body, positionBall] = ball(physics_world, scene, 0, 3, 0)
+    const [physics_ball, ball_body, positionBall] = ball(physics_world, scene, 5,1+1,3.12)
 
 
     //render
@@ -114,12 +111,27 @@ opacity: 0}//d1d1d1
 
     // //update sizes
     window.addEventListener('resize', () => {
+        const browserZoomLevel = window.devicePixelRatio;
         sizes.width = window.innerWidth
         sizes.height = window.innerHeight
 
         camera.aspect = sizes.width / sizes.height
+
+
+        if (camera.aspect > 16/9) {
+            // window too large
+            camera.fov = fov;
+        } else {
+            // window too narrow
+            const cameraHeight = Math.tan(MathUtils.degToRad(fov / 2));
+            const ratio = camera.aspect / planeAspectRatio;
+            const newCameraHeight = cameraHeight / ratio;
+            camera.fov = MathUtils.radToDeg(Math.atan(newCameraHeight)) * 2;
+        }
+
         camera.updateProjectionMatrix()
-        renderer.setSize(sizes.width, sizes.height, false)
+        renderer.setSize(sizes.width, sizes.height)
+        // console.log(window.innerWidth)
     })
 
 
@@ -134,14 +146,35 @@ opacity: 0}//d1d1d1
 
     window.addEventListener('mousedown', (e) => {
 
-        mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
-        mouse.y = - (e.clientY / window.innerHeight) * 2 + 1;
+        const lL = window.innerWidth/2 - 1150/2
+        const hL = window.innerWidth/2 + 1150/2
+
+        const lL_y = 0
+        const hL_y = 600
+
+        if (e.clientX >= lL && e.clientX <= hL){
+            const posX = e.clientX - lL
+
+            mouse.x = (posX / 1150) * 2 - 1
+        }
+        else{
+            mouse.x = (mouse.x) < 0 ? -1 : 1
+        }
+
+        if (e.clientY >= lL_y && e.clientY <= hL_y){
+            const posY = e.clientY - lL_y
+
+            mouse.y = -(posY / 600) * 2 + 1
+        }
+        else{
+            mouse.y = (mouse.y) < 0 ? -1 : 1
+        }
 
         raycaster.setFromCamera(mouse, camera)
 
         objects = raycaster.intersectObjects(scene.children)
 
-
+        console.log(objects)
 
         if (objects.length > 0 && objects[0].object.userData.draggable) {
             y_pos = objects[0].object.position.y
@@ -168,8 +201,34 @@ opacity: 0}//d1d1d1
         const past_mouseMove_x = mouseMove.x
         const past_mouseMove_y = mouseMove.y
 
-        mouseMove.x = (e.clientX / window.innerWidth) * 2 - 1;
-        mouseMove.y = - (e.clientY / window.innerHeight) * 2 + 1;
+        // mouseMove.x = (e.clientX / sizes.width) * 2 - 1;
+        // mouseMove.y = - (e.clientY / window.innerHeight) * 2 + 1;
+
+        const lL = window.innerWidth/2 - 1150/2
+        const hL = window.innerWidth/2 + 1150/2
+
+        const lL_y = 0
+        const hL_y = 600
+
+        if (e.clientX >= lL && e.clientX <= hL){
+            const posX = e.clientX - lL
+
+            mouseMove.x = (posX / 1150) * 2 - 1
+        }
+        else{
+            mouseMove.x = (mouseMove.x) < 0 ? -1 : 1
+        }
+
+        if (e.clientY >= lL_y && e.clientY <= hL_y){
+            const posY = e.clientY - lL_y
+
+            mouseMove.y = -(posY / 600) * 2 + 1
+        }
+        else{
+            mouseMove.y = (mouseMove.y) < 0 ? -1 : 1
+        }
+        
+        console.log(mouseMove.x + ' ' + mouseMove.y)
 
         if (mouseMove.x < -1 || mouseMove.x > 1) {
             mouseMove.x = past_mouseMove_x
@@ -185,8 +244,8 @@ opacity: 0}//d1d1d1
     let pickedObject = () => {
         if (picked) {
             raycaster.setFromCamera(mouseMove, camera)
-
-            let intersects = new THREE.Vector3()
+            console.log(raycaster)
+            let intersects = new THREE.Vector3()    
             raycaster.ray.intersectPlane(plane, intersects)
 
             ball_body.position.set(intersects.x, y_pos, intersects.z)
@@ -207,15 +266,18 @@ opacity: 0}//d1d1d1
 
         render_Ball()
         botRender()
-
+        
         target_pick_drop(positionBall, target_sphere, robot)
         pickedObject()
         requestAnimationFrame(animate)
         renderer.render(scene, camera)
+        
     }
 
-
+    // console.log(elementPos)
     animate()
+
+    
 
     return (
         <>
