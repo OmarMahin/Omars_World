@@ -41,7 +41,7 @@ const Banner = () => {
 
           <div className="ml-16 ">
             <h1 className=" text-[100px] font-mainHeading text-fontColor">
-              Omar’s W<span  ref={worldRef}>o</span>rld
+              Omar’s W<span  ref={worldRef} className="text-transparent">o</span>rld
             </h1>
 
             <p className="mt-6 w-[650px] text-mainFont font-bold text-[#3C3C3C] leading-8 text-lg">

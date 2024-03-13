@@ -10,21 +10,23 @@ export function ball(physics_world, render_world, px, py, pz) {
     //render body
 
 
-    render_body = new THREE.Mesh(new THREE.SphereGeometry(0.82), new MeshStandardMaterial({
+    // render_body = new THREE.Mesh(new THREE.SphereGeometry(0.82), new MeshStandardMaterial({
+    //     transparent: true,
+    //     opacity: 1,
+    //     color: "#E72648"
+    // }))
+    // render_body.position.set(new THREE.Vector3(0,0,0))
+    // render_body.userData.draggable = true
+
+    // render_world.add(render_body)
+
+    targetBody = new THREE.Mesh(new THREE.SphereGeometry(0.85), new MeshStandardMaterial({
         transparent: true,
         opacity: 1,
-        color: "#E72648"
+        color: 'red',
+        visible: false
     }))
-    render_body.position.set(new THREE.Vector3(0,0,0))
-    render_body.userData.draggable = true
-
-    render_world.add(render_body)
-
-    targetBody = new THREE.Mesh(new THREE.SphereGeometry(0.25), new MeshStandardMaterial({
-        transparent: true,
-        opacity: 0,
-    }))
-    targetBody.userData.draggable = false
+    targetBody.userData.draggable = true
 
     render_world.add(targetBody)
 
@@ -42,15 +44,20 @@ export function ball(physics_world, render_world, px, py, pz) {
     return [physics_body, render_body, targetBody]
 }
 
+export function loadBall(body, render_world){
+    render_body = body
+    render_body.position.set(new THREE.Vector3(0,0,0))
+    render_world.add(render_body)
+}
 
 export function changeBallPostion(newPos, transparent, physicsBody, renderBody) {
     if (physicsBody) physics_body.position.copy(newPos)
     if (renderBody) render_body.position.copy(physics_body.position)
     if (transparent) {
-        render_body.material.opacity = 0
+        render_body.visible = false
     }
     else {
-        render_body.material.opacity = 1
+        render_body.visible = true
     }
 
 }
@@ -65,5 +72,5 @@ export function render_Ball() {
 
 
 export function checkBallVisibility() {
-    return render_body.material.opacity
+    return render_body.visible
 }
