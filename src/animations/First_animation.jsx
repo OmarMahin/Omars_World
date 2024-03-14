@@ -27,10 +27,14 @@ import { useRef } from "react";
 const First_animation = () => {
   const worldRef = useRef(null);
   let worldCoords = new THREE.Vector2();
+  let resized = false
+  let timer = 0
 
-  // const [alphabetPosition, setAlphabetPosition] = useState()
+  const [zoomed, setZoomed] = useState(false)
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    timer = 0
+  }, [zoomed]);
 
   const sizes = {
     width: 1150,
@@ -155,8 +159,9 @@ const First_animation = () => {
   );
 
   loadManager.onLoad = () => {
-    worldCoords.x = worldRef.current.getBoundingClientRect().x;
-    worldCoords.y = worldRef.current.getBoundingClientRect().y;
+    const letterInfo = worldRef.current.getBoundingClientRect()
+    worldCoords.x = letterInfo.x + letterInfo.width/1.8;
+    worldCoords.y = letterInfo.y + letterInfo.height/1.45;
 
     let coords = new THREE.Vector2();
     coords = normaliseCoordinates(worldCoords.x, worldCoords.y, 1150, 600);
@@ -212,20 +217,10 @@ const First_animation = () => {
 
     camera.aspect = sizes.width / sizes.height;
 
-    if (camera.aspect > 16 / 9) {
-      // window too large
-      camera.fov = fov;
-    } else {
-      // window too narrow
-      const cameraHeight = Math.tan(MathUtils.degToRad(fov / 2));
-      const ratio = camera.aspect / planeAspectRatio;
-      const newCameraHeight = cameraHeight / ratio;
-      camera.fov = MathUtils.radToDeg(Math.atan(newCameraHeight)) * 2;
-    }
-
     camera.updateProjectionMatrix();
     renderer.setSize(sizes.width, sizes.height);
-    // console.log(window.innerWidth)
+    resized = true
+    timer = 0
   });
 
   // ray casting
@@ -289,6 +284,15 @@ const First_animation = () => {
   //picking object and dragging it
 
   let pickedObject = () => {
+    if (timer < 51){
+      timer += 1
+    }
+
+    if (timer == 50 && resized){
+      setZoomed(!zoomed)
+      resized = false
+    }
+    
     if (picked) {
       raycaster.setFromCamera(mouseMove, camera);
       let intersects = new THREE.Vector3();
