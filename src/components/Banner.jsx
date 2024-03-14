@@ -1,15 +1,17 @@
 import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
+import { useContext } from "react";
 import { useRef } from "react";
 import Button from "./Button";
 import Container from "./Container";
+import { contextApi } from "./helper/ContextApi";
 
 const Banner = () => {
   let worldRef = useRef(null)
   let contRef = useRef(null)
 
-  let [containerRef, setContainerRef] = useState('')
+  
   // let [zoom, setZoom] = useState(Math.ceil(window.devicePixelRatio*100))
 
   // window.addEventListener('resize',()=>{
@@ -21,17 +23,19 @@ const Banner = () => {
   //   transform: `scale(${1-zoom/100 == 0 ? 1 : 1+(1-zoom/100)})`,
   // };
 
+  const {setWorldReference} = useContext(contextApi)
+
   useEffect(()=>{
-    if (contRef)
+    if (worldRef)
     { 
-      console.log(contRef.current.getBoundingClientRect().width)
-      setContainerRef(contRef.current.getBoundingClientRect().width)
+      setWorldReference(worldRef.current.getBoundingClientRect().width)
+      console.log(worldRef.current.getBoundingClientRect().width)
     }
   },[])
   
   
   return (
-    <div className="absolute top-0 left-0 w-full pb-64 bg-backgroundColor" ref = {contRef}>
+    <div className="absolute top-0 left-0 w-full pb-64 bg-backgroundColor">
       <Container>
         {/* <div>{containerRef}</div> */}
         <div className="pl-[190px] mt-52" >
