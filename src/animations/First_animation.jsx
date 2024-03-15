@@ -12,8 +12,6 @@ import CannonDebugger, * as C_DEBUGGER from "cannon-es-debugger";
 import {
   groundPhyBody,
   bot,
-  controlBot,
-  botAddToScene,
   botRender,
   target_pick_drop,
   addRenderRobotBodyParts,
@@ -25,15 +23,18 @@ import { normaliseCoordinates } from "../functions/2d_3d_conversion.jsx";
 import { useRef } from "react";
 
 const First_animation = () => {
-  const worldRef = useRef(null);
-  let worldCoords = new THREE.Vector2();
-  let resized = false
-  let timer = 0
+  const letter_O_ref = useRef(null);
+  const letter_L_ref = useRef(null);
 
-  const [zoomed, setZoomed] = useState(false)
+  let letter_O_Coords = new THREE.Vector2();
+  let letter_L_Coords = new THREE.Vector2();
+  let resized = false;
+  let timer = 0;
+
+  const [zoomed, setZoomed] = useState(false);
 
   useEffect(() => {
-    timer = 0
+    timer = 0;
   }, [zoomed]);
 
   const sizes = {
@@ -63,7 +64,6 @@ const First_animation = () => {
 
   target_sphere.userData.draggable = false;
   target_sphere.userData.name = "Target";
-  target_sphere.position.set(5.35, 1, 3.12);
   scene.add(target_sphere);
 
   // light
@@ -159,20 +159,41 @@ const First_animation = () => {
   );
 
   loadManager.onLoad = () => {
-    const letterInfo = worldRef.current.getBoundingClientRect()
-    worldCoords.x = letterInfo.x + letterInfo.width/1.8;
-    worldCoords.y = letterInfo.y + letterInfo.height/1.45;
+  
+    const letter_L_info = letter_L_ref.current.getBoundingClientRect();
+    letter_L_Coords.x = letter_L_info.x  + letter_L_info.height/5;
+    letter_L_Coords.y = letter_L_info.y - letter_L_info.height/1.5;
 
-    let coords = new THREE.Vector2();
-    coords = normaliseCoordinates(worldCoords.x, worldCoords.y, 1150, 600);
-    raycaster.setFromCamera(coords, camera);
+    let coords_L = new THREE.Vector2();
+    coords_L = normaliseCoordinates(
+      letter_L_Coords.x,
+      letter_L_Coords.y,
+      1150,
+      600
+    );
+    raycaster.setFromCamera(coords_L, camera);
     let intersects = new THREE.Vector3();
     raycaster.ray.intersectPlane(plane, intersects);
-    console.log(intersects);
-
-    robot = bot(5, 2, 3.99, -10, 2, 0, 7, 1.3, 5);
+    
+    robot = bot(5, 2, 3.99, intersects.x, 2, intersects.z, 7, 1.3, 5, scene);
     robot.addToWorld(physics_world);
     addRenderRobotBodyParts(botBody, botWithBall, botWheelL, botWheelR, scene);
+
+    const letter_O_info = letter_O_ref.current.getBoundingClientRect();
+    letter_O_Coords.x = letter_O_info.x + letter_O_info.width / 1.8;
+    letter_O_Coords.y = letter_O_info.y + letter_O_info.height / 1.45;
+
+    let coords_O = new THREE.Vector2();
+    coords_O = normaliseCoordinates(
+      letter_O_Coords.x,
+      letter_O_Coords.y,
+      1150,
+      600
+    );
+    raycaster.setFromCamera(coords_O, camera);
+    intersects = new THREE.Vector3();
+    raycaster.ray.intersectPlane(plane, intersects);
+
     loadBall(ball_body, scene);
     let [physical_Body, render_body, target_body] = ball(
       physics_world,
@@ -184,22 +205,15 @@ const First_animation = () => {
     physics_ball = physical_Body;
     ball_body = render_body;
     positionBall = target_body;
-    console.log("Complete");
 
-    
+    target_sphere.position.set(intersects.x, 1, intersects.z);
+
+    console.log("Complete");
   };
 
   loadManager.onError = function (url) {
     console.log("There was an error loading " + url);
   };
-
-  // const robot = bot(5, 2, 3.99, -10, 2, 0, 7, 1.3, 5)
-  // robot.addToWorld(physics_world)
-  // botAddToScene(scene, physics_world)
-
-  // controlBot(robot, 'S')
-
-  // const [physics_ball, ball_body, positionBall] = ball(physics_world, scene, 5,1+1,3.12)
 
   //render
 
@@ -219,8 +233,8 @@ const First_animation = () => {
 
     camera.updateProjectionMatrix();
     renderer.setSize(sizes.width, sizes.height);
-    resized = true
-    timer = 0
+    resized = true;
+    timer = 0;
   });
 
   // ray casting
@@ -284,15 +298,15 @@ const First_animation = () => {
   //picking object and dragging it
 
   let pickedObject = () => {
-    if (timer < 51){
-      timer += 1
+    if (timer < 51) {
+      timer += 1;
     }
 
-    if (timer == 50 && resized){
-      setZoomed(!zoomed)
-      resized = false
+    if (timer == 50 && resized) {
+      setZoomed(!zoomed);
+      resized = false;
     }
-    
+
     if (picked) {
       raycaster.setFromCamera(mouseMove, camera);
       let intersects = new THREE.Vector3();
@@ -309,7 +323,7 @@ const First_animation = () => {
   const animate = () => {
     physics_world.fixedStep();
     if (robot && ball_body) {
-      // c_debug.update() //physics debugger
+      // c_de bug.update() //physics debugger
 
       render_Ball();
       botRender();
@@ -336,10 +350,10 @@ const First_animation = () => {
           <div className="ml-16 ">
             <h1 className=" text-[100px] font-mainHeading text-fontColor">
               Omar’s W
-              <span ref={worldRef} className="text-transparent">
+              <span ref={letter_O_ref} className="text-transparent">
                 o
               </span>
-              rld
+              r<span ref={letter_L_ref}>l</span>d
             </h1>
 
             <p className="mt-6 w-[650px] text-mainFont font-bold text-[#3C3C3C] leading-8 text-lg">
