@@ -5,7 +5,6 @@ import { useContext } from "react";
 import { useRef } from "react";
 import Button from "./Button";
 import Container from "./Container";
-import { contextApi } from "./helper/ContextApi";
 
 const Banner = () => {
   let worldRef = useRef(null)

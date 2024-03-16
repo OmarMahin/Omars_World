@@ -8,7 +8,7 @@ const Home = () => {
 
   return (
     <div>
-      {/* <DisableZoom /> */}
+      <DisableZoom />
       <First_animation />
     </div>
   );

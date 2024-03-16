@@ -35,7 +35,7 @@ export function ball(physics_world, render_world, px, py, pz) {
 
     physics_body = new cannon.Body({
         mass: 0.1,
-        shape: new cannon.Sphere(0.82),
+        shape: new cannon.Box(new cannon.Vec3(1.8/2,1.8/2,1.8/2)),
         position: new cannon.Vec3(px, py, pz)
     })
 

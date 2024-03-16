@@ -15,6 +15,7 @@ import {
   botRender,
   target_pick_drop,
   addRenderRobotBodyParts,
+  resetBot,
 } from "../functions/Robot.jsx";
 
 import { ball, loadBall, render_Ball } from "../functions/Ball.jsx";
@@ -35,6 +36,10 @@ const First_animation = () => {
 
   useEffect(() => {
     timer = 0;
+    if (robot){
+      resetBot(robot)
+    }
+    
   }, [zoomed]);
 
   const sizes = {
@@ -323,7 +328,7 @@ const First_animation = () => {
   const animate = () => {
     physics_world.fixedStep();
     if (robot && ball_body) {
-      // c_de bug.update() //physics debugger
+      // c_debug.update() //physics debugger
 
       render_Ball();
       botRender();
