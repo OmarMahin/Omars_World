@@ -34,7 +34,13 @@ const First_animation = () => {
 
   const [zoomed, setZoomed] = useState(false);
 
+  window.onbeforeunload = ()=>{
+    window.scrollTo(0,0)
+  }
+
   useEffect(() => {
+    console.log("Refreshed")
+    
     timer = 0;
     if (robot){
       resetBot(robot)
@@ -164,7 +170,6 @@ const First_animation = () => {
   );
 
   loadManager.onLoad = () => {
-  
     const letter_L_info = letter_L_ref.current.getBoundingClientRect();
     letter_L_Coords.x = letter_L_info.x  + letter_L_info.height/5;
     letter_L_Coords.y = letter_L_info.y - letter_L_info.height/1.5;
@@ -371,9 +376,9 @@ const First_animation = () => {
               </span>
               ) Learn more...
             </p>
-            <div className="mt-11">
-              <Button text={"About me"} />
-              <Button text={"About the robot"} />
+            <div className="mt-11 relative">
+              <Button text={"About me"} className = 'absolute top-0 left-0 z-40'/>
+              <Button text={"About the robot"} className = 'absolute top-0 left-[220px] z-40'/>
             </div>
           </div>
         </div>

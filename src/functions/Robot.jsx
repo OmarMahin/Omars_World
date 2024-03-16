@@ -269,7 +269,7 @@ export function target_pick_drop(target, target_pos, robot) {
                     changeBallPostion(target_pos.position, false, true, true);
                 }
 
-                 if (distance > 0.8) {
+                 if (distance > 1) {
                     controlBot(robot, "F", -speed);
                 } else {
                     if (
