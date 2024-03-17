@@ -1,8 +1,8 @@
 import React from 'react'
 
-const List = ({children}) => {
+const List = ({children, className, id}) => {
   return (
-    <ul className='flex'>
+    <ul className={` ${className}`} id = {`${id}`}>
         {children}
     </ul>
   )

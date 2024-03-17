@@ -18,6 +18,7 @@ export default {
       },
       maxWidth: {
         conatiner: '1150px',
+        '320': '320px',
       }
     },
   },
