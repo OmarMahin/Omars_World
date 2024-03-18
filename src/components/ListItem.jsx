@@ -2,7 +2,7 @@ import React from 'react'
 
 const ListItem = ({link, children, className}) => {
   return (
-    <li className = {` ${className}`}>
+    <li className = {`flex items-end justify-between ${className}`}>
       {children}
     </li>
   )
