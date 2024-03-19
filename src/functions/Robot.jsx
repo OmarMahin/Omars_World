@@ -1,7 +1,5 @@
 import * as cannon from "cannon-es";
 import * as THREE from "three";
-import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
-import { randInt } from "three/src/math/mathutils";
 import { changeBallPostion, checkBallVisibility } from "../functions/Ball.jsx";
 
 let wheelL = null,

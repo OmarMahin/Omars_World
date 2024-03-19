@@ -24,7 +24,7 @@ import { Vector3 } from "three";
 import { normaliseCoordinates } from "../functions/2d_3d_conversion.jsx";
 import { useRef } from "react";
 
-const First_animation = () => {
+const Home_Animation = () => {
   const letter_O_ref = useRef(null);
   const letter_L_ref = useRef(null);
 
@@ -350,16 +350,15 @@ const First_animation = () => {
   animate();
 
   return (
-    <div className="absolute top-0 left-0 w-full pb-64 bg-backgroundColor">
+    <div className="absolute top-0 left-0 w-full pb-64 bg-backgroundColor z-20">
       <Container>
-        {/* <div>{containerRef}</div> */}
-        <div className="pl-[190px] mt-52">
-          <h3 className="text-[40px] font-subHeading text-[#1B1B1B]">
+        <div className="lg:pl-[190px] lg:mt-52 mt-24">
+          <h3 className="text-[20px] lg:text-[40px] font-subHeading text-[#1B1B1B] w-[40%]">
             Hi! Welcome to
           </h3>
 
-          <div className="ml-16 ">
-            <h1 className=" text-[100px] font-mainHeading text-fontColor">
+          <div className="lg:ml-16 lg:mt-0 mt-4 lg:text-left text-center">
+            <h1 className="lg:text-[100px] font-mainHeading text-fontColor text-[70px]  lg:font-normal font-semibold leading-[80px] lg:leading-normal">
               Omar’s W
               <span ref={letter_O_ref} className="text-transparent">
                 o
@@ -367,7 +366,7 @@ const First_animation = () => {
               r<span ref={letter_L_ref}>l</span>d
             </h1>
 
-            <p className="mt-6 w-[650px] text-mainFont font-bold text-[#3C3C3C] leading-8 text-lg">
+            <p className="mt-6 max-w-480B lg:max-w-[650px] text-mainFont font-bold text-[#3C3C3C] lg:leading-8 lg:text-lg text-base leading-8">
               My name is Omar. I love to play with codes and make my own
               mechanical buddies, like the one you are seeing here, right on top
               of the word ‘World’. (
@@ -377,6 +376,10 @@ const First_animation = () => {
               </span>
               ) Learn more...
             </p>
+            {/* <p className="mt-6 max-w-480B lg:max-w-[650px] text-mainFont font-bold text-[#5B5B5B] lg:leading-8 lg:text-lg text-base leading-8">
+            The letter ‘o’ in ‘World’ looks a bit suspicious. I wonder what
+                happens if you move it far away.... 
+            </p> */}
             <div className="mt-11 relative">
               <Button text={"About me"} className = 'absolute top-0 left-0 z-40'/>
               <Button text={"About the robot"} className = 'absolute top-0 left-[220px] z-40'/>
@@ -388,4 +391,4 @@ const First_animation = () => {
   );
 };
 
-export default First_animation;
+export default Home_Animation;

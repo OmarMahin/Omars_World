@@ -18,8 +18,8 @@ export default {
       },
       maxWidth: {
         conatiner: '1150px',
-        '320': '320px',
-      }
+        '480B': '480px',
+      },
     },
   },
   plugins: [],
