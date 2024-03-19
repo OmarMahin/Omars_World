@@ -359,9 +359,9 @@ const Home_Animation = () => {
   
 
   return (
-    <div className="absolute top-0 left-0 w-full pb-64 bg-backgroundColor z-20">
+    <div className=" w-full pb-64 bg-backgroundColor">
       <Container>
-        <div className="lg:pl-[190px] lg:mt-52 mt-24">
+        <div className="lg:pl-[190px] lg:pt-52 pt-24">
           <h3 className="text-[20px] lg:text-[40px] font-subHeading text-[#1B1B1B] w-[40%]">
             Hi! Welcome to
           </h3>

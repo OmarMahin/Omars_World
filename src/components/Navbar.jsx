@@ -67,7 +67,7 @@ const Navbar = () => {
                                 className='lg:hidden text-white absolute right-4 top-3 text-xl hover:cursor-pointer'
                                 onClick={changeNavState}
                             />
-                            <ListItem>
+                            <ListItem className = {'justify-between'}>
                                 <Link
                                     className={
                                         " pt-9 text-mainFont text-white font-bold text-[18px] lg:relative lg:after:content-[''] lg:after:absolute after:bottom-[-10px]  after:left-1/2 after:w-[0px] after:h-1 after:bg-secondaryColor after:translate-x-[-50%] after:rounded-s-full after:hover:w-[50px]  after:hover:ease-out after:hover:duration-300 lg:text-base lg:text-fontColor"
@@ -78,8 +78,8 @@ const Navbar = () => {
                                 <h3 className='text-mainFont text-white lg:text-fontColor font-bold text-[22px] inline-block lg:hidden'>
                                     +
                                 </h3>
-                            </ListItem>
-                            <ListItem>
+                            </ListItem >
+                            <ListItem className = {'justify-between'}>
                                 <Link
                                     className={
                                         " pt-6 text-mainFont text-white lg:text-fontColor font-bold text-base lg:relative lg:after:content-[''] lg:after:absolute after:bottom-[-10px]  after:left-1/2 after:w-[0px] after:h-1 after:bg-secondaryColor after:translate-x-[-50%] after:rounded-s-full after:hover:w-[50px]  after:hover:ease-out after:hover:duration-300"
@@ -88,7 +88,7 @@ const Navbar = () => {
                                     About
                                 </Link>
                             </ListItem>
-                            <ListItem>
+                            <ListItem className = {'justify-between'}>
                                 <Link
                                     className={
                                         " pt-6 text-mainFont text-white lg:text-fontColor font-bold text-base lg:relative lg:after:content-[''] lg:after:absolute after:bottom-[-10px]  after:left-1/2 after:w-[0px] after:h-1 after:bg-secondaryColor after:translate-x-[-50%] after:rounded-s-full after:hover:w-[50px]  after:hover:ease-out after:hover:duration-300"
@@ -97,7 +97,7 @@ const Navbar = () => {
                                     Projects
                                 </Link>
                             </ListItem>
-                            <ListItem>
+                            <ListItem className = {'justify-between'}>
                                 <Link
                                     className={
                                         " pt-6 text-mainFont text-white lg:text-fontColor font-bold text-base lg:relative lg:after:content-[''] lg:after:absolute after:bottom-[-10px]  after:left-1/2 after:w-[0px] after:h-1 after:bg-secondaryColor after:translate-x-[-50%] after:rounded-s-full after:hover:w-[50px]  after:hover:ease-out after:hover:duration-300"
@@ -106,7 +106,7 @@ const Navbar = () => {
                                     Achievements
                                 </Link>
                             </ListItem>
-                            <ListItem>
+                            <ListItem className = {'justify-between'}>
                                 <Link
                                     className={
                                         " pt-6 text-mainFont text-white lg:text-fontColor font-bold text-base lg:relative lg:after:content-[''] lg:after:absolute after:bottom-[-10px]  after:left-1/2 after:w-[0px] after:h-1 after:bg-secondaryColor after:translate-x-[-50%] after:rounded-s-full after:hover:w-[50px]  after:hover:ease-out after:hover:duration-300"
@@ -115,7 +115,7 @@ const Navbar = () => {
                                     Portfolio
                                 </Link>
                             </ListItem>
-                            <ListItem>
+                            <ListItem className = {'justify-between'}>
                                 <Link
                                     className={
                                         "pt-6 text-mainFont text-white lg:text-fontColor font-bold text-base lg:relative lg:after:content-[''] lg:after:absolute after:bottom-[-10px]  after:left-1/2 after:w-[0px] after:h-1 after:bg-secondaryColor after:translate-x-[-50%] after:rounded-s-full after:hover:w-[50px]  after:hover:ease-out after:hover:duration-300"

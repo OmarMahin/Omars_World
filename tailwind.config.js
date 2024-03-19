@@ -8,8 +8,10 @@ export default {
     extend: {
       colors:{
         'backgroundColor' : '#EDE8E8',
+        'secondaryBackgroundColor': '#D1CDCD',
         'fontColor' : '#1E1E1E',
-        'secondaryColor' : '#1B1B1B'
+        'secondaryColor' : '#1B1B1B',
+        'lightFontColor' : '#3C3C3C'
       },
       fontFamily:{
         mainHeading: ['Josefin Sans'],
