@@ -10,16 +10,7 @@ import Link from "./Link";
 
 const Navbar = () => {
     let [showNavMenu, setShowNavMenu] = useState(false);
-    // let [zoom, setZoom] = useState(Math.ceil(window.devicePixelRatio*100))
-
-    // window.addEventListener('resize',()=>{
-    //   setZoom(Math.ceil(window.devicePixelRatio*100))
-    //   console.log(zoom)
-    // })
-
-    // let styles = {
-    //   transform: `scale(${1-zoom/100 == 0 ? 1 : 1+(1-zoom/100)})`,
-    // };
+    let [showNavShadow, setShowNavShadow] = useState(false);
 
     useEffect(() => {
         function checkWindowSize() {
@@ -33,32 +24,37 @@ const Navbar = () => {
         window.addEventListener("resize", checkWindowSize);
     }, []);
 
+    window.addEventListener('scroll',()=>{
+        if (window.scrollY == 0){
+            setShowNavShadow(false)
+        }
+        else{
+            setShowNavShadow(true)
+        }
+    })
+
     const changeNavState = () => {
         setShowNavMenu(!showNavMenu);
     };
 
     return (
-        <div className='absolute top-0 left-0 w-full z-30'>
-            {
-                !showNavMenu && 
-                <Flex className={"ml-3 mt-[20px] gap-2 items-center lg:hidden  cursor-pointer"} onClick={changeNavState}>
-
-                <FaBars
-                    className=' w-6 h-6 rounded border-secondaryColor border-2 hover:text-white hover:duration-150 hover:bg-secondaryColor p-1'
-                    
-                />
-                <h2 className=' text-mainFont text-fontColor font-bold text-[21px]'>Menu</h2>
-                
-            </Flex>
-            }
-
-           
-                
-            
+        <div
+            className={`fixed lg:absolute top-0 left-0 w-full z-30 bg-backgroundColor ${
+                (showNavShadow && !showNavMenu) ? "drop-shadow-md pb-4" : "drop-shadow-none pb-0"
+            }  lg:pb-0 lg:drop-shadow-none`}
+        >
+            {!showNavMenu && (
+                <Flex
+                    className={"ml-3 mt-[20px] gap-2 items-center lg:hidden  cursor-pointer"}
+                    onClick={changeNavState}
+                >
+                    <FaBars className=' w-6 h-6 rounded border-secondaryColor border-2 hover:text-white hover:duration-150 hover:bg-secondaryColor p-1' />
+                    <h2 className=' text-mainFont text-fontColor font-bold text-[21px]'>Menu</h2>
+                </Flex>
+            )}
 
             <Container>
                 <nav>
-
                     <Flex className={"justify-center"}>
                         <List
                             className={
@@ -74,14 +70,14 @@ const Navbar = () => {
                             <ListItem>
                                 <Link
                                     className={
-                                        " pt-6 text-mainFont text-white font-bold text-[18px] lg:relative lg:after:content-[''] lg:after:absolute after:bottom-[-10px]  after:left-1/2 after:w-[0px] after:h-1 after:bg-secondaryColor after:translate-x-[-50%] after:rounded-s-full after:hover:w-[50px]  after:hover:ease-out after:hover:duration-300 lg:text-base lg:text-fontColor"
+                                        " pt-9 text-mainFont text-white font-bold text-[18px] lg:relative lg:after:content-[''] lg:after:absolute after:bottom-[-10px]  after:left-1/2 after:w-[0px] after:h-1 after:bg-secondaryColor after:translate-x-[-50%] after:rounded-s-full after:hover:w-[50px]  after:hover:ease-out after:hover:duration-300 lg:text-base lg:text-fontColor"
                                     }
                                 >
                                     Home
                                 </Link>
                                 <h3 className='text-mainFont text-white lg:text-fontColor font-bold text-[22px] inline-block lg:hidden'>
-                                        +
-                                    </h3>
+                                    +
+                                </h3>
                             </ListItem>
                             <ListItem>
                                 <Link

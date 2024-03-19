@@ -2,6 +2,8 @@ import React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
 
+import useDetectScroll from '@smakss/react-scroll-direction';
+
 
 import Button from "./Button";
 import Container from "./Container";
@@ -265,19 +267,28 @@ const Home_Animation = () => {
 
     objects = raycaster.intersectObjects(scene.children, false);
 
-    // console.log(objects);
-    // console.log(ball_body);
-
-    if (objects.length > 0 && objects[0].object.userData.draggable) {
-      y_pos = objects[0].object.position.y;
-      picked = true;
-      console.log("EEE");
+    if (window.scrollY == 0){
+      if (objects.length > 0 && objects[0].object.userData.draggable) {
+        y_pos = objects[0].object.position.y;
+        picked = true;;
+      }
     }
+
+    
   });
 
   // //letting the object drop
 
   window.addEventListener("mouseup", (e) => {
+    if (picked) {
+      picked = false;
+      ball_body.position.y = 5;
+      physics_ball.position.copy(ball_body.position);
+      physics_ball.quaternion.copy(ball_body.quaternion);
+    }
+  });
+
+  window.addEventListener("scroll", (e) => {
     if (picked) {
       picked = false;
       ball_body.position.y = 5;
@@ -292,12 +303,8 @@ const Home_Animation = () => {
     const past_mouseMove_x = mouseMove.x;
     const past_mouseMove_y = mouseMove.y;
 
-    // mouseMove.x = (e.clientX / sizes.width) * 2 - 1;
-    // mouseMove.y = - (e.clientY / window.innerHeight) * 2 + 1;
 
     mouseMove = normaliseCoordinates(e.clientX, e.clientY, 1150, 600);
-
-    // console.log(mouseMove);
 
     if (mouseMove.x < -1 || mouseMove.x > 1) {
       mouseMove.x = past_mouseMove_x;
@@ -349,6 +356,7 @@ const Home_Animation = () => {
   };
 
   animate();
+  
 
   return (
     <div className="absolute top-0 left-0 w-full pb-64 bg-backgroundColor z-20">
