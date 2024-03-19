@@ -3,8 +3,8 @@ import { useEffect } from "react";
 import { useState } from "react";
 
 
-import Button from "../components/Button";
-import Container from "../components/Container";
+import Button from "./Button";
+import Container from "./Container";
 
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
@@ -23,6 +23,7 @@ import { ball, loadBall, render_Ball } from "../functions/Ball.jsx";
 import { Vector3 } from "three";
 import { normaliseCoordinates } from "../functions/2d_3d_conversion.jsx";
 import { useRef } from "react";
+import Flex from "./Flex";
 
 const Home_Animation = () => {
   const letter_O_ref = useRef(null);
@@ -380,9 +381,10 @@ const Home_Animation = () => {
             The letter ‘o’ in ‘World’ looks a bit suspicious. I wonder what
                 happens if you move it far away.... 
             </p> */}
-            <div className="mt-11 relative">
-              <Button text={"About me"} className = 'absolute top-0 left-0 z-40'/>
-              <Button text={"About the robot"} className = 'absolute top-0 left-[220px] z-40'/>
+            <div className="mt-11 relative z-40">
+              <Flex className={'flex-wrap gap-4 justify-center lg:justify-start'}><Button text={"About me"} className = ''/>
+              <Button text={"About the robot"} className = ''/></Flex>
+              
             </div>
           </div>
         </div>

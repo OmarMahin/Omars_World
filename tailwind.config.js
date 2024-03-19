@@ -20,6 +20,10 @@ export default {
         conatiner: '1150px',
         '480B': '480px',
       },
+
+      screens: {
+        '480B': '480px',
+      }
     },
   },
   plugins: [],
