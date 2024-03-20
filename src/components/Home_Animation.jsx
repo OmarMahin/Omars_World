@@ -30,6 +30,7 @@ import Flex from "./Flex";
 const Home_Animation = () => {
   const letter_O_ref = useRef(null);
   const letter_L_ref = useRef(null);
+  const containerRef = useRef();
 
   let letter_O_Coords = new THREE.Vector2();
   let letter_L_Coords = new THREE.Vector2();
@@ -42,20 +43,19 @@ const Home_Animation = () => {
     window.scrollTo(0,0)
   }
 
+  const sizes = {
+    width: 1024,
+    height: 600,
+  };
+
   useEffect(() => {
     console.log("Refreshed")
-    
     timer = 0;
     if (robot){
       resetBot(robot)
     }
     
   }, [zoomed]);
-
-  const sizes = {
-    width: 1150,
-    height: 600,
-  };
 
   //Scene
 
@@ -94,7 +94,7 @@ const Home_Animation = () => {
   //camera
   let fov = 45;
   console.log(sizes.width / sizes.height);
-  const camera = new THREE.PerspectiveCamera(fov, 1150 / 600, 1, 1000);
+  const camera = new THREE.PerspectiveCamera(fov, sizes.width / sizes.height, 1, 1000);
   camera.position.z = 20;
   camera.position.y = 20;
   camera.lookAt(0, 0, 0);
@@ -174,6 +174,7 @@ const Home_Animation = () => {
   );
 
   loadManager.onLoad = () => {
+    console.log(window.innerWidth)
     const letter_L_info = letter_L_ref.current.getBoundingClientRect();
     letter_L_Coords.x = letter_L_info.x  + letter_L_info.height/5;
     letter_L_Coords.y = letter_L_info.y - letter_L_info.height/1.5;
@@ -182,8 +183,8 @@ const Home_Animation = () => {
     coords_L = normaliseCoordinates(
       letter_L_Coords.x,
       letter_L_Coords.y,
-      1150,
-      600
+      sizes.width,
+      sizes.height
     );
     raycaster.setFromCamera(coords_L, camera);
     let intersects = new THREE.Vector3();
@@ -194,15 +195,15 @@ const Home_Animation = () => {
     addRenderRobotBodyParts(botBody, botWithBall, botWheelL, botWheelR, scene);
 
     const letter_O_info = letter_O_ref.current.getBoundingClientRect();
-    letter_O_Coords.x = letter_O_info.x + letter_O_info.width / 1.8;
+    letter_O_Coords.x = letter_O_info.x + letter_O_info.width / 2.5;
     letter_O_Coords.y = letter_O_info.y + letter_O_info.height / 1.45;
 
     let coords_O = new THREE.Vector2();
     coords_O = normaliseCoordinates(
       letter_O_Coords.x,
       letter_O_Coords.y,
-      1150,
-      600
+      sizes.width,
+      sizes.height
     );
     raycaster.setFromCamera(coords_O, camera);
     intersects = new THREE.Vector3();
@@ -243,7 +244,7 @@ const Home_Animation = () => {
     sizes.width = window.innerWidth;
     sizes.height = window.innerHeight;
 
-    camera.aspect = sizes.width / sizes.height;
+    // camera.aspect = sizes.width / sizes.height;
 
     camera.updateProjectionMatrix();
     renderer.setSize(sizes.width, sizes.height);
@@ -261,7 +262,7 @@ const Home_Animation = () => {
   let y_pos = null;
 
   window.addEventListener("mousedown", (e) => {
-    mouse = normaliseCoordinates(e.clientX, e.clientY, 1150, 600);
+    mouse = normaliseCoordinates(e.clientX, e.clientY, sizes.width, sizes.height);
 
     raycaster.setFromCamera(mouse, camera);
 
@@ -304,7 +305,7 @@ const Home_Animation = () => {
     const past_mouseMove_y = mouseMove.y;
 
 
-    mouseMove = normaliseCoordinates(e.clientX, e.clientY, 1150, 600);
+    mouseMove = normaliseCoordinates(e.clientX, e.clientY, sizes.width, sizes.height);
 
     if (mouseMove.x < -1 || mouseMove.x > 1) {
       mouseMove.x = past_mouseMove_x;
@@ -359,9 +360,9 @@ const Home_Animation = () => {
   
 
   return (
-    <div className=" w-full pb-64 bg-backgroundColor">
+    <div className="relative top-0 left-0 z-0 w-full pb-64 bg-backgroundColor">
       <Container>
-        <div className="lg:pl-[190px] lg:pt-52 pt-24">
+        <div className="lg:pl-[190px] lg:pt-52 pt-24" ref={containerRef}>
           <h3 className="text-[20px] lg:text-[40px] font-subHeading text-[#1B1B1B] w-[40%]">
             Hi! Welcome to
           </h3>

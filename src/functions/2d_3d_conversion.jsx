@@ -13,7 +13,7 @@ export function normaliseCoordinates(x,y, width, height){
     if (x >= lL && x <= hL) {
         const posX = x - lL;
   
-        pos.x = (posX / 1150) * 2 - 1;
+        pos.x = (posX / width) * 2 - 1;
       } else {
         pos.x = pos.x < 0 ? -1 : 1;
       }
@@ -21,7 +21,7 @@ export function normaliseCoordinates(x,y, width, height){
       if (y >= lL_y && y <= hL_y) {
         const posY = y - lL_y;
   
-        pos.y = -(posY / 600) * 2 + 1;
+        pos.y = -(posY / height) * 2 + 1;
       } else {
         pos.y = pos.y < 0 ? -1 : 1;
       }
