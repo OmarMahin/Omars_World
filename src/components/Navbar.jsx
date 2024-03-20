@@ -39,8 +39,8 @@ const Navbar = () => {
 
     return (
         <div
-            className={`fixed lg:absolute top-0 left-0 w-full z-30 bg-backgroundColor ${
-                (showNavShadow && !showNavMenu) ? "drop-shadow-md pb-4" : "drop-shadow-none pb-0"
+            className={`fixed lg:absolute top-0 left-0 w-full z-30  ${
+                (showNavShadow && !showNavMenu) ? "drop-shadow-md pb-4 bg-backgroundColor" : "drop-shadow-none pb-0 bg-transparent"
             }  lg:pb-0 lg:drop-shadow-none`}
         >
             {!showNavMenu && (
