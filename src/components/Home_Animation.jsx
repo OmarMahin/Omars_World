@@ -2,8 +2,6 @@ import React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
 
-import useDetectScroll from "@smakss/react-scroll-direction";
-
 import Button from "./Button";
 import Container from "./Container";
 
@@ -25,6 +23,7 @@ import { Vector3 } from "three";
 import { normaliseCoordinates } from "../functions/2d_3d_conversion.jsx";
 import { useRef } from "react";
 import Flex from "./Flex";
+import { decideSizeAndPos } from "../functions/SizeAndPosition";
 
 const Home_Animation = () => {
     const letter_O_ref = useRef(null);
@@ -49,8 +48,14 @@ const Home_Animation = () => {
 
     let sizes = {
         width: null,
-        height: window.innerHeight,
+        height: null,
     };
+
+    let [w,h] = decideSizeAndPos(window.innerWidth,true,false,false)
+
+    sizes.width = w
+    sizes.height = h
+
 
     useEffect(() => {
         console.log("Refreshed");
@@ -94,32 +99,12 @@ const Home_Animation = () => {
     light2.position.set(0, 100, 0);
     scene.add(light2);
 
-    let camera;
-    let fov = 45;
-    let cameraDis = 0;
-    let ratio = 0
 
-    if (window.innerWidth >= 1024) {
-        sizes.width = 1024;
-        ratio = 1024/600
-        cameraDis = 20;
-    } else if (window.innerWidth >= 768) {
-        sizes.width = 768;
-        ratio = 768/450
-        cameraDis = 32;
-    } else if (window.innerWidth >= 640) {
-        sizes.width = 640;
-        ratio = 640/376
-        cameraDis = 18;
-    }
-     else if (window.innerWidth >= 340) {
-        sizes.width = 340;
-        ratio = 340/200
-        cameraDis = 26;
-    }
+    let fov = 45;
+    let cameraDis = decideSizeAndPos(window.innerWidth,false,true,false);
 
     //camera
-    camera = new THREE.PerspectiveCamera(fov, sizes.width / sizes.height, 1, 1000);
+    const camera = new THREE.PerspectiveCamera(fov, sizes.width/sizes.height, 1, 1000);
     camera.position.z = cameraDis;
     camera.position.y = cameraDis;
     camera.lookAt(0, 0, 0);
@@ -194,35 +179,13 @@ const Home_Animation = () => {
         const letter_L_info = letter_L_ref.current.getBoundingClientRect();
         const letter_O_info = letter_O_ref.current.getBoundingClientRect();
 
-        if (window.innerWidth >= 1024) {
-            letter_L_Coords.x = letter_L_info.x + letter_L_info.height / 5;
-            letter_L_Coords.y = letter_L_info.y - letter_L_info.height / 1.5;
+        let [l_x,l_y, o_x,o_y] = decideSizeAndPos(window.innerWidth,false,false,true,letter_L_info,letter_O_info)
 
-            letter_O_Coords.x = letter_O_info.x + letter_O_info.width / 2.5;
-            letter_O_Coords.y = letter_O_info.y + letter_O_info.height / 1.45;
-        } else if (window.innerWidth >= 768) {
-            letter_L_Coords.x = letter_L_info.x + letter_L_info.height * 1.2;
-            letter_L_Coords.y = letter_L_info.y - letter_L_info.height * 1.5;
+        letter_L_Coords.x = l_x
+        letter_L_Coords.y = l_y
 
-            letter_O_Coords.x = letter_O_info.x + letter_O_info.width / 2;
-            letter_O_Coords.y = letter_O_info.y + letter_O_info.height / 1.35;
-        } else if (window.innerWidth >= 640) {
-            letter_L_Coords.x = letter_L_info.x + letter_L_info.height * 1.2;
-            letter_L_Coords.y = letter_L_info.y - letter_L_info.height * 1.5;
-
-            letter_O_Coords.x = letter_O_info.x + letter_O_info.width / 2;
-            letter_O_Coords.y = letter_O_info.y + letter_O_info.height / 1.55;
-        }
-
-        else if (window.innerWidth >= 340){
-
-          letter_L_Coords.x = letter_L_info.x + letter_L_info.height * 0.6;
-            letter_L_Coords.y = letter_L_info.y - letter_L_info.height * 1.5;
-
-            letter_O_Coords.x = letter_O_info.x + letter_O_info.width / 2;
-            letter_O_Coords.y = letter_O_info.y + letter_O_info.height / 1.35;
-
-        }
+        letter_O_Coords.x = o_x
+        letter_O_Coords.y = o_y
 
         let coords_L = new THREE.Vector2();
         coords_L = normaliseCoordinates(
@@ -275,7 +238,7 @@ const Home_Animation = () => {
     //render
 
     const canvas = document.querySelector(".webgl");
-    const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true });
+    const renderer = new THREE.WebGLRenderer({antialias: true, canvas: canvas, alpha: true });
 
     renderer.setSize(sizes.width, sizes.height);
     renderer.render(scene, camera);
@@ -286,9 +249,9 @@ const Home_Animation = () => {
             past_sizes.width = window.innerWidth;
         past_sizes.height = window.innerHeight;
 
-        // camera.aspect = sizes.width / sizes.height;
+        // camera.aspect = 1024/700;
 
-        camera.updateProjectionMatrix();
+        // camera.updateProjectionMatrix();
         // renderer.setSize(sizes.width, sizes.height);
         resized = true;
         timer = 0;
@@ -403,6 +366,7 @@ const Home_Animation = () => {
         <div className='relative top-0 left-0 z-0 w-full pb-64 bg-backgroundColor'>
             <Container>
                 <div className='lg:pl-[190px] lg:pt-52 pt-24' ref={containerRef}>
+                    
                     <h3 className='text-[20px] lg:text-[40px] font-subHeading text-[#1B1B1B] w-[40%]'>
                         Hi! Welcome to
                     </h3>
