@@ -36,6 +36,11 @@ const Home_Animation = () => {
     let resized = false;
     let timer = 0;
 
+    let past_sizes = {
+        width: window.innerWidth,
+        height: window.innerHeight
+    }
+
     const [zoomed, setZoomed] = useState(false);
 
     window.onbeforeunload = () => {
@@ -277,16 +282,18 @@ const Home_Animation = () => {
 
     // //update sizes
     window.addEventListener("resize", () => {
-        const browserZoomLevel = window.devicePixelRatio;
-        sizes.width = window.innerWidth;
-        sizes.height = window.innerHeight;
+        if (past_sizes.width != window.innerWidth && past_sizes.height != window.innerHeight){
+            past_sizes.width = window.innerWidth;
+        past_sizes.height = window.innerHeight;
 
         // camera.aspect = sizes.width / sizes.height;
 
         camera.updateProjectionMatrix();
-        renderer.setSize(sizes.width, sizes.height);
+        // renderer.setSize(sizes.width, sizes.height);
         resized = true;
         timer = 0;
+
+        }
     });
 
     // ray casting
