@@ -290,8 +290,10 @@ const Home_Animation = () => {
 
                 let head = document.getElementById("head");
                 let body = document.getElementById("body");
-                head.classList.remove("preventOverScroll");
-                body.classList.remove("preventOverScroll");
+                head.style.overflowY = "none";
+                body.style.overflowY = "none";
+                head.style.overscrollBehavior = "none";
+                body.style.overscrollBehavior = "none";
             }
         },
         true
@@ -340,8 +342,10 @@ const Home_Animation = () => {
                 picked = true;
                 let head = document.getElementById("head");
                 let body = document.getElementById("body");
-                head.classList.add("preventOverScroll");
-                body.classList.add("preventOverScroll");
+                head.style.overflowY = "hidden";
+                body.style.overflowY = "hidden";
+                head.style.overscrollBehavior = "contain";
+                body.style.overscrollBehavior = "contain";
             }
         }
     }
@@ -364,8 +368,10 @@ const Home_Animation = () => {
 
             let head = document.getElementById("head");
             let body = document.getElementById("body");
-            head.classList.remove("preventOverScroll");
-            body.classList.remove("preventOverScroll");
+            head.style.overflowY = "none";
+            body.style.overflowY = "none";
+            head.style.overscrollBehavior = "none";
+            body.style.overscrollBehavior = "none";
         }
     }
 
