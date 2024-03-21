@@ -19,7 +19,7 @@ export default {
         mainFont: ['Istok Web'],
       },
       maxWidth: {
-        conatiner: '1150px',
+        conatiner: '1024px',
         '480B': '480px',
       },
 
