@@ -37,8 +37,8 @@ const Home_Animation = () => {
 
     let past_sizes = {
         width: window.innerWidth,
-        height: window.innerHeight
-    }
+        height: window.innerHeight,
+    };
 
     const [zoomed, setZoomed] = useState(false);
 
@@ -51,11 +51,10 @@ const Home_Animation = () => {
         height: null,
     };
 
-    let [w,h] = decideSizeAndPos(window.innerWidth,true,false,false)
+    let [w, h] = decideSizeAndPos(window.innerWidth, true, false, false);
 
-    sizes.width = w
-    sizes.height = h
-
+    sizes.width = w;
+    sizes.height = h;
 
     useEffect(() => {
         console.log("Refreshed");
@@ -99,12 +98,11 @@ const Home_Animation = () => {
     light2.position.set(0, 100, 0);
     scene.add(light2);
 
-
     let fov = 45;
-    let cameraDis = decideSizeAndPos(window.innerWidth,false,true,false);
+    let cameraDis = decideSizeAndPos(window.innerWidth, false, true, false);
 
     //camera
-    const camera = new THREE.PerspectiveCamera(fov, sizes.width/sizes.height, 1, 1000);
+    const camera = new THREE.PerspectiveCamera(fov, sizes.width / sizes.height, 1, 1000);
     camera.position.z = cameraDis;
     camera.position.y = cameraDis;
     camera.lookAt(0, 0, 0);
@@ -179,13 +177,20 @@ const Home_Animation = () => {
         const letter_L_info = letter_L_ref.current.getBoundingClientRect();
         const letter_O_info = letter_O_ref.current.getBoundingClientRect();
 
-        let [l_x,l_y, o_x,o_y] = decideSizeAndPos(window.innerWidth,false,false,true,letter_L_info,letter_O_info)
+        let [l_x, l_y, o_x, o_y] = decideSizeAndPos(
+            window.innerWidth,
+            false,
+            false,
+            true,
+            letter_L_info,
+            letter_O_info
+        );
 
-        letter_L_Coords.x = l_x
-        letter_L_Coords.y = l_y
+        letter_L_Coords.x = l_x;
+        letter_L_Coords.y = l_y;
 
-        letter_O_Coords.x = o_x
-        letter_O_Coords.y = o_y
+        letter_O_Coords.x = o_x;
+        letter_O_Coords.y = o_y;
 
         let coords_L = new THREE.Vector2();
         coords_L = normaliseCoordinates(
@@ -238,24 +243,23 @@ const Home_Animation = () => {
     //render
 
     const canvas = document.querySelector(".webgl");
-    const renderer = new THREE.WebGLRenderer({antialias: true, canvas: canvas, alpha: true });
+    const renderer = new THREE.WebGLRenderer({ antialias: true, canvas: canvas, alpha: true });
 
     renderer.setSize(sizes.width, sizes.height);
     renderer.render(scene, camera);
 
     // //update sizes
     window.addEventListener("resize", () => {
-        if (past_sizes.width != window.innerWidth && past_sizes.height != window.innerHeight){
+        if (past_sizes.width != window.innerWidth && past_sizes.height != window.innerHeight) {
             past_sizes.width = window.innerWidth;
-        past_sizes.height = window.innerHeight;
+            past_sizes.height = window.innerHeight;
 
-        // camera.aspect = 1024/700;
+            // camera.aspect = 1024/700;
 
-        // camera.updateProjectionMatrix();
-        // renderer.setSize(sizes.width, sizes.height);
-        resized = true;
-        timer = 0;
-
+            // camera.updateProjectionMatrix();
+            // renderer.setSize(sizes.width, sizes.height);
+            resized = true;
+            timer = 0;
         }
     });
 
@@ -268,7 +272,33 @@ const Home_Animation = () => {
     let picked = false;
     let y_pos = null;
 
-    window.addEventListener("mousedown", (e) => {
+    window.addEventListener("touchstart", touchDown, false);
+    window.addEventListener("mousedown", mouseDown, false);
+
+    // //letting the object drop
+    window.addEventListener("touchend", touchUp, false);
+    window.addEventListener("mouseup", mouseUp, false);
+
+    window.addEventListener("scroll", (e) => {
+        if (picked) {
+            picked = false;
+            ball_body.position.y = 5;
+            physics_ball.position.copy(ball_body.position);
+            physics_ball.quaternion.copy(ball_body.quaternion);
+        }
+    });
+
+    //dragging the object
+    window.addEventListener("touchmove", touchMove, false);
+    window.addEventListener("mousemove", mouseMovement, false);
+
+    if (matchMedia("(pointer: coarse)").matches) {
+        window.removeEventListener("mousedown", mouseDown);
+        window.removeEventListener("mouseup", mouseUp);
+        window.removeEventListener("mousemove", mouseMovement);
+    }
+
+    function mouseDown(e) {
         mouse = normaliseCoordinates(e.clientX, e.clientY, sizes.width, sizes.height);
 
         raycaster.setFromCamera(mouse, camera);
@@ -281,31 +311,47 @@ const Home_Animation = () => {
                 picked = true;
             }
         }
-    });
+    }
 
-    // //letting the object drop
+    function touchDown(e) {
+        mouse = normaliseCoordinates(
+            e.touches[0].clientX,
+            e.touches[0].clientY,
+            sizes.width,
+            sizes.height
+        );
 
-    window.addEventListener("mouseup", (e) => {
+        raycaster.setFromCamera(mouse, camera);
+
+        objects = raycaster.intersectObjects(scene.children, false);
+
+        if (window.scrollY == 0) {
+            if (objects.length > 0 && objects[0].object.userData.draggable) {
+                y_pos = objects[0].object.position.y;
+                picked = true;
+            }
+        }
+    }
+
+    function mouseUp(e) {
         if (picked) {
             picked = false;
             ball_body.position.y = 5;
             physics_ball.position.copy(ball_body.position);
             physics_ball.quaternion.copy(ball_body.quaternion);
         }
-    });
+    }
 
-    window.addEventListener("scroll", (e) => {
+    function touchUp(e) {
         if (picked) {
             picked = false;
             ball_body.position.y = 5;
             physics_ball.position.copy(ball_body.position);
             physics_ball.quaternion.copy(ball_body.quaternion);
         }
-    });
+    }
 
-    //dragging the object
-
-    window.addEventListener("mousemove", (e) => {
+    function mouseMovement(e) {
         const past_mouseMove_x = mouseMove.x;
         const past_mouseMove_y = mouseMove.y;
 
@@ -317,7 +363,32 @@ const Home_Animation = () => {
         if (mouseMove.y < -1 || mouseMove.y > 1) {
             mouseMove.y = past_mouseMove_y;
         }
-    });
+    }
+
+    function touchMove(e) {
+        const past_mouseMove_x = mouseMove.x;
+        const past_mouseMove_y = mouseMove.y;
+
+        mouseMove = normaliseCoordinates(
+            e.touches[0].clientX,
+            e.touches[0].clientY,
+            sizes.width,
+            sizes.height
+        );
+
+        if (mouseMove.x < -1 || mouseMove.x > 1) {
+            mouseMove.x = past_mouseMove_x;
+        }
+        if (mouseMove.y < -1 || mouseMove.y > 1) {
+            mouseMove.y = past_mouseMove_y;
+        }
+    }
+
+    // else{
+    //     window.removeEventListener('touchstart')
+    //     window.removeEventListener('touchend')
+    //     window.removeEventListener('touchmove')
+    // }
 
     //picking object and dragging it
 
@@ -363,10 +434,9 @@ const Home_Animation = () => {
     animate();
 
     return (
-        <div className='relative top-0 left-0 z-0 w-full pb-64 bg-backgroundColor'>
+        <div className='w-full pb-64 bg-backgroundColor'>
             <Container>
                 <div className='lg:pl-[190px] lg:pt-52 pt-24' ref={containerRef}>
-                    
                     <h3 className='text-[20px] lg:text-[40px] font-subHeading text-[#1B1B1B] w-[40%]'>
                         Hi! Welcome to
                     </h3>
@@ -394,9 +464,9 @@ const Home_Animation = () => {
             The letter ‘o’ in ‘World’ looks a bit suspicious. I wonder what
                 happens if you move it far away.... 
             </p> */}
-                        <div className='mt-11 relative z-40'>
-                            <Flex className={"flex-wrap gap-4 justify-center lg:justify-start"}>
-                                <Button text={"About me"} className='' />
+                        <div className='mt-11'>
+                            <Flex className={"flex-wrap gap-4 justify-center lg:justify-start relative z-20"}>
+                                <Button text={"About me"} className='relative z-20' />
                                 <Button text={"About the robot"} className='' />
                             </Flex>
                         </div>
