@@ -279,14 +279,23 @@ const Home_Animation = () => {
     window.addEventListener("touchend", touchUp, false);
     window.addEventListener("mouseup", mouseUp, false);
 
-    window.addEventListener("scroll", (e) => {
-        if (picked) {
-            picked = false;
-            ball_body.position.y = 5;
-            physics_ball.position.copy(ball_body.position);
-            physics_ball.quaternion.copy(ball_body.quaternion);
-        }
-    });
+    window.addEventListener(
+        "scroll",
+        (e) => {
+            if (picked) {
+                picked = false;
+                ball_body.position.y = 5;
+                physics_ball.position.copy(ball_body.position);
+                physics_ball.quaternion.copy(ball_body.quaternion);
+
+                let head = document.getElementById("head");
+                let body = document.getElementById("body");
+                head.classList.remove("preventOverScroll");
+                body.classList.remove("preventOverScroll");
+            }
+        },
+        true
+    );
 
     //dragging the object
     window.addEventListener("touchmove", touchMove, false);
@@ -329,6 +338,10 @@ const Home_Animation = () => {
             if (objects.length > 0 && objects[0].object.userData.draggable) {
                 y_pos = objects[0].object.position.y;
                 picked = true;
+                let head = document.getElementById("head");
+                let body = document.getElementById("body");
+                head.classList.add("preventOverScroll");
+                body.classList.add("preventOverScroll");
             }
         }
     }
@@ -348,6 +361,11 @@ const Home_Animation = () => {
             ball_body.position.y = 5;
             physics_ball.position.copy(ball_body.position);
             physics_ball.quaternion.copy(ball_body.quaternion);
+
+            let head = document.getElementById("head");
+            let body = document.getElementById("body");
+            head.classList.remove("preventOverScroll");
+            body.classList.remove("preventOverScroll");
         }
     }
 
@@ -465,7 +483,11 @@ const Home_Animation = () => {
                 happens if you move it far away.... 
             </p> */}
                         <div className='mt-11'>
-                            <Flex className={"flex-wrap gap-4 justify-center lg:justify-start relative z-20"}>
+                            <Flex
+                                className={
+                                    "flex-wrap gap-4 justify-center lg:justify-start relative z-20"
+                                }
+                            >
                                 <Button text={"About me"} className='relative z-20' />
                                 <Button text={"About the robot"} className='' />
                             </Flex>
