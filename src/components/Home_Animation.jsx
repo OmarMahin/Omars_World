@@ -370,8 +370,8 @@ const Home_Animation = () => {
             let body = document.getElementById("body");
             head.style.overflowY = "none";
             body.style.overflowY = "none";
-            head.style.overscrollBehavior = "none";
-            body.style.overscrollBehavior = "none";
+            head.style.overscrollBehavior = "auto";
+            body.style.overscrollBehavior = "auto";
         }
     }
 

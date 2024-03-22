@@ -13,11 +13,6 @@
 body,
 html{
   overflow-x: hidden  ;
+  overscroll-behavior: contain;
   
-  
-}
-
-.preventOverScroll{
-  overscroll-behavior: none; 
-  overflow-y: hidden;
 }
