@@ -288,12 +288,12 @@ const Home_Animation = () => {
                 physics_ball.position.copy(ball_body.position);
                 physics_ball.quaternion.copy(ball_body.quaternion);
 
-                let head = document.getElementById("head");
+                let html = document.getElementById("html");
                 let body = document.getElementById("body");
-                head.style.overflowY = "none";
-                body.style.overflowY = "none";
-                head.style.overscrollBehavior = "none";
-                body.style.overscrollBehavior = "none";
+                html.style.overflowY = "auto";
+                body.style.overflowY = "auto";
+                html.style.overscrollBehavior = "auto";
+                body.style.overscrollBehavior = "auto";
             }
         },
         true
@@ -340,12 +340,12 @@ const Home_Animation = () => {
             if (objects.length > 0 && objects[0].object.userData.draggable) {
                 y_pos = objects[0].object.position.y;
                 picked = true;
-                let head = document.getElementById("head");
+                let html = document.getElementById("html");
                 let body = document.getElementById("body");
-                head.style.overflowY = "hidden";
+                html.style.overflowY = "hidden";
                 body.style.overflowY = "hidden";
-                head.style.overscrollBehavior = "contain";
-                body.style.overscrollBehavior = "contain";
+                html.style.overscrollBehavior = "none";
+                body.style.overscrollBehavior = "none";
             }
         }
     }
@@ -366,11 +366,11 @@ const Home_Animation = () => {
             physics_ball.position.copy(ball_body.position);
             physics_ball.quaternion.copy(ball_body.quaternion);
 
-            let head = document.getElementById("head");
+            let html = document.getElementById("html");
             let body = document.getElementById("body");
-            head.style.overflowY = "none";
-            body.style.overflowY = "none";
-            head.style.overscrollBehavior = "auto";
+            html.style.overflowY = "auto";
+            body.style.overflowY = "auto";
+            html.style.overscrollBehavior = "auto";
             body.style.overscrollBehavior = "auto";
         }
     }
@@ -461,12 +461,12 @@ const Home_Animation = () => {
         <div className='w-full pb-64 bg-backgroundColor'>
             <Container>
                 <div className='lg:pl-[190px] lg:pt-52 pt-24' ref={containerRef}>
-                    <h3 className='text-[20px] lg:text-[40px] font-subHeading text-[#1B1B1B] w-[40%]'>
+                    <h3 className='text-[20px] lg:text-[40px] font-subhtmling text-[#1B1B1B] w-[40%]'>
                         Hi! Welcome to
                     </h3>
 
                     <div className='lg:ml-16 lg:mt-0 mt-4 lg:text-left text-center'>
-                        <h1 className='lg:text-[100px] font-mainHeading text-fontColor text-[70px]  lg:font-normal font-semibold leading-[80px] lg:leading-normal'>
+                        <h1 className='lg:text-[100px] font-mainhtmling text-fontColor text-[70px]  lg:font-normal font-semibold leading-[80px] lg:leading-normal'>
                             Omar’s W
                             <span ref={letter_O_ref} className='text-transparent'>
                                 o
