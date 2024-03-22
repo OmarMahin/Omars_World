@@ -2,7 +2,7 @@ export function decideSizeAndPos(width, getSize, getCameraDis, getLetterPos, coo
     let _w, _h, _cameraDis, _l_x, _l_y, _o_x, _o_y;
 
     if (width >= 1024) {
-        _w = 1024;
+        _w = window.innerWidth;
         _h = 700;
         _cameraDis = 22;
         if (coord_L && coord_O) {
@@ -13,7 +13,7 @@ export function decideSizeAndPos(width, getSize, getCameraDis, getLetterPos, coo
             _o_y = coord_O.y + coord_O.height / 1.4;
         }
     } else if (window.innerWidth >= 768) {
-        _w = 768;
+        _w = window.innerWidth;
         _h = 526;
         _cameraDis = 21;
         if (coord_L && coord_O) {
@@ -24,7 +24,7 @@ export function decideSizeAndPos(width, getSize, getCameraDis, getLetterPos, coo
             _o_y = coord_O.y + coord_O.height / 1.4;
         }
     } else if (window.innerWidth >= 640) {
-        _w = 640;
+        _w = window.innerWidth;
         _h = 438;
         _cameraDis = 20;
         if (coord_L && coord_O) {
@@ -35,7 +35,7 @@ export function decideSizeAndPos(width, getSize, getCameraDis, getLetterPos, coo
             _o_y = coord_O.y + coord_O.height / 1.4;
         }
     } else if (window.innerWidth >= 320) {
-        _w = 320;
+        _w = window.innerWidth;
         _h = window.innerHeight;
         _cameraDis = 24;
         if (coord_L && coord_O) {
