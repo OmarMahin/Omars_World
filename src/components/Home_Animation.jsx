@@ -461,12 +461,12 @@ const Home_Animation = () => {
         <div className='w-full pb-64 bg-backgroundColor'>
             <Container>
                 <div className='lg:pl-[190px] lg:pt-52 pt-24' ref={containerRef}>
-                    <h3 className='text-[20px] lg:text-[40px] font-subHeading text-[#1B1B1B] w-[40%]'>
+                    <h3 className='text-[20px] lg:text-[40px] font-subhtmling text-[#1B1B1B] w-[40%]'>
                         Hi! Welcome to
                     </h3>
 
                     <div className='lg:ml-16 lg:mt-0 mt-4 lg:text-left text-center'>
-                        <h1 className='lg:text-[100px] font-mainHeading text-fontColor text-[70px]  lg:font-normal font-semibold leading-[80px] lg:leading-normal'>
+                        <h1 className='lg:text-[100px] font-mainhtmling text-fontColor text-[70px]  lg:font-normal font-semibold leading-[80px] lg:leading-normal'>
                             Omar’s W
                             <span ref={letter_O_ref} className='text-transparent'>
                                 o
