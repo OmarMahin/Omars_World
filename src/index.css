@@ -13,11 +13,7 @@
 body,
 html{
   overflow-x: hidden  ;
+  overscroll-behavior: none !important;
   
 }
 
-
-body{
-  height: 100%;
-  overscroll-behavior: none !important;
-}
