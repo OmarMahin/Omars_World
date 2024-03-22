@@ -461,7 +461,7 @@ const Home_Animation = () => {
         <div className='w-full pb-64 bg-backgroundColor'>
             <Container>
                 <div className='lg:pl-[190px] lg:pt-52 pt-24' ref={containerRef}>
-                    <div>{window.innerWidth}</div>
+                    {/* <div>{window.innerWidth}</div> */}
                     <h3 className='text-[20px] lg:text-[40px] font-subHeading text-[#1B1B1B] w-[40%]'>
                         Hi! Welcome to
                     </h3>

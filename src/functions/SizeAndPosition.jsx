@@ -2,7 +2,7 @@ export function decideSizeAndPos(width, getSize, getCameraDis, getLetterPos, coo
     let _w, _h, _cameraDis, _l_x, _l_y, _o_x, _o_y;
 
     if (width >= 1024) {
-        _w = window.innerWidth;
+        _w = 1024;
         _h = 700;
         _cameraDis = 22;
         if (coord_L && coord_O) {
@@ -15,7 +15,7 @@ export function decideSizeAndPos(width, getSize, getCameraDis, getLetterPos, coo
     } else if (window.innerWidth >= 768) {
         _w = window.innerWidth;
         _h = 526;
-        _cameraDis = 21;
+        _cameraDis = 23;
         if (coord_L && coord_O) {
             _l_x = coord_L.x + coord_L.height * 1.2;
             _l_y = coord_L.y - coord_L.height * 1.5;
@@ -26,7 +26,7 @@ export function decideSizeAndPos(width, getSize, getCameraDis, getLetterPos, coo
     } else if (window.innerWidth >= 640) {
         _w = window.innerWidth;
         _h = 438;
-        _cameraDis = 20;
+        _cameraDis = 21;
         if (coord_L && coord_O) {
             _l_x = coord_L.x + coord_L.height * 1.2;
             _l_y = coord_L.y - coord_L.height * 1.5;
@@ -36,8 +36,8 @@ export function decideSizeAndPos(width, getSize, getCameraDis, getLetterPos, coo
         }
     } else if (window.innerWidth >= 320) {
         _w = window.innerWidth;
-        _h = window.innerHeight;
-        _cameraDis = 24;
+        _h = 600;
+        _cameraDis = 26;
         if (coord_L && coord_O) {
             _l_x = coord_L.x + coord_L.height * 0.6;
             _l_y = coord_L.y - coord_L.height * 1.5;
