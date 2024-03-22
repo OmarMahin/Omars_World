@@ -288,12 +288,12 @@ const Home_Animation = () => {
                 physics_ball.position.copy(ball_body.position);
                 physics_ball.quaternion.copy(ball_body.quaternion);
 
-                let head = document.getElementById("head");
+                let html = document.getElementById("html");
                 let body = document.getElementById("body");
-                head.style.overflowY = "none";
-                body.style.overflowY = "none";
-                head.style.overscrollBehavior = "none";
-                body.style.overscrollBehavior = "none";
+                html.style.overflowY = "auto";
+                body.style.overflowY = "auto";
+                html.style.overscrollBehavior = "auto";
+                body.style.overscrollBehavior = "auto";
             }
         },
         true
@@ -340,12 +340,12 @@ const Home_Animation = () => {
             if (objects.length > 0 && objects[0].object.userData.draggable) {
                 y_pos = objects[0].object.position.y;
                 picked = true;
-                let head = document.getElementById("head");
+                let html = document.getElementById("html");
                 let body = document.getElementById("body");
-                head.style.overflowY = "hidden";
+                html.style.overflowY = "hidden";
                 body.style.overflowY = "hidden";
-                head.style.overscrollBehavior = "contain";
-                body.style.overscrollBehavior = "contain";
+                html.style.overscrollBehavior = "none";
+                body.style.overscrollBehavior = "none";
             }
         }
     }
@@ -366,11 +366,11 @@ const Home_Animation = () => {
             physics_ball.position.copy(ball_body.position);
             physics_ball.quaternion.copy(ball_body.quaternion);
 
-            let head = document.getElementById("head");
+            let html = document.getElementById("html");
             let body = document.getElementById("body");
-            head.style.overflowY = "none";
-            body.style.overflowY = "none";
-            head.style.overscrollBehavior = "auto";
+            html.style.overflowY = "auto";
+            body.style.overflowY = "auto";
+            html.style.overscrollBehavior = "auto";
             body.style.overscrollBehavior = "auto";
         }
     }
