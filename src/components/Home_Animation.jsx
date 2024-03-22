@@ -292,8 +292,8 @@ const Home_Animation = () => {
                 let body = document.getElementById("body");
                 html.style.overflowY = "auto";
                 body.style.overflowY = "auto";
-                html.style.overscrollBehavior = "scroll";
-                body.style.overscrollBehavior = "scroll";
+                html.style.overscrollBehavior = "auto";
+                body.style.overscrollBehavior = "auto";
             }
         },
         true
@@ -370,8 +370,8 @@ const Home_Animation = () => {
             let body = document.getElementById("body");
             html.style.overflowY = "auto";
             body.style.overflowY = "auto";
-            html.style.overscrollBehavior = "scroll";
-            body.style.overscrollBehavior = "scroll";
+            html.style.overscrollBehavior = "auto";
+            body.style.overscrollBehavior = "auto";
         }
     }
 
