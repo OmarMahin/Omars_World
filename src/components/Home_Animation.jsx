@@ -5,6 +5,7 @@ import { useState } from "react";
 import Button from "./Button";
 import Container from "./Container";
 
+import Robot from "./classes/Robot_Class";
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import * as CANNON from "cannon-es";
@@ -26,6 +27,7 @@ import Flex from "./Flex";
 import { decideSizeAndPos } from "../functions/SizeAndPosition";
 
 const Home_Animation = () => {
+
     const letter_O_ref = useRef(null);
     const letter_L_ref = useRef(null);
     const containerRef = useRef();
@@ -136,6 +138,7 @@ const Home_Animation = () => {
     let physics_ball = null,
         positionBall = null,
         ball_body = null;
+    let _robot = null
 
     model.load(
         "/3d_models/TuFu.glb",
@@ -203,10 +206,12 @@ const Home_Animation = () => {
         raycaster.setFromCamera(coords_L, camera);
         let intersects = new THREE.Vector3();
         raycaster.ray.intersectPlane(plane, intersects);
+        
+        _robot = new Robot(botBody,botWithBall, botWheelR,botWheelL, scene, physics_world, intersects.x, 2, intersects.z)
 
         robot = bot(5, 2, 3.99, intersects.x, 2, intersects.z, 7, 1.3, 5, scene);
-        robot.addToWorld(physics_world);
-        addRenderRobotBodyParts(botBody, botWithBall, botWheelL, botWheelR, scene);
+        // robot.addToWorld(physics_world);
+        // addRenderRobotBodyParts(botBody, botWithBall, botWheelL, botWheelR, scene);
 
         let coords_O = new THREE.Vector2();
         coords_O = normaliseCoordinates(
@@ -454,11 +459,12 @@ const Home_Animation = () => {
 
     const animate = () => {
         physics_world.fixedStep();
-        if (robot && ball_body) {
-            // c_debug.update() //physics debugger
+        if (_robot && ball_body) {
+            c_debug.update() //physics debugger
 
             render_Ball();
-            botRender();
+            // botRender();
+            _robot.botRender()
 
             target_pick_drop(positionBall, target_sphere, robot);
             pickedObject();
