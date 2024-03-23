@@ -250,7 +250,6 @@ const Home_Animation = () => {
                 });
             }, 1000);
         }
-
         console.log("Complete");
     };
 
@@ -452,7 +451,7 @@ const Home_Animation = () => {
             ball_body.position.set(intersects.x, y_pos, intersects.z);
         }
     };
-
+    
     // //cannon-es-debugger
 
     const c_debug = new CannonDebugger(scene, physics_world, {});
