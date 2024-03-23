@@ -233,6 +233,19 @@ const Home_Animation = () => {
 
         target_sphere.position.set(intersects.x, 1, intersects.z);
 
+        const loadingScreen = document.getElementById("loading");
+        if (loadingScreen) {
+            const loadingTimer = setInterval(() => {
+                console.log("delay");
+
+                loadingScreen.classList.add("opacity-0");
+                loadingScreen.addEventListener("transitionend", () => {
+                    loadingScreen.remove();
+                    clearInterval(loadingTimer);
+                });
+            }, 1000);
+        }
+
         console.log("Complete");
     };
 

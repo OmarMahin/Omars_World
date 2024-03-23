@@ -14,3 +14,18 @@ body,
 html{
   overflow-x: hidden  ;
 }
+
+.fade{
+  animation: fade-away 5s ease-in-out 0 1;
+}
+
+@keyframes fade-away {
+  0% {
+    visibility: visible;
+    opacity: 1;
+  }
+  100% {
+    visibility: hidden;
+    opacity: 0;
+  }
+}

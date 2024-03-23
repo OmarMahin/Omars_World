@@ -7,10 +7,12 @@ import ListItem from "./ListItem";
 import { FaBars } from "react-icons/fa";
 import { IoMdCloseCircle } from "react-icons/io";
 import Link from "./Link";
+import { useRef } from "react";
 
 const Navbar = () => {
     let [showNavMenu, setShowNavMenu] = useState(false);
     let [showNavShadow, setShowNavShadow] = useState(false);
+    let navbarRef = useRef()
 
     useEffect(() => {
         function checkWindowSize() {
@@ -22,6 +24,11 @@ const Navbar = () => {
         }
         checkWindowSize();
         window.addEventListener("resize", checkWindowSize);
+        document.addEventListener('touchstart',(e)=>{
+            if (!(navbarRef.current.contains(e.target))){
+                setShowNavMenu(false)
+            }
+        })
     }, []);
 
     window.addEventListener('scroll',()=>{
@@ -46,15 +53,15 @@ const Navbar = () => {
             {!showNavMenu && (
                 <Flex
                     className={"ml-3 mt-[20px] gap-2 items-center lg:hidden  cursor-pointer"}
-                    onClick={changeNavState}
+                    
                 >
-                    <FaBars className=' w-6 h-6 rounded border-secondaryColor border-2 hover:text-white hover:duration-150 hover:bg-secondaryColor p-1' />
-                    <h2 className=' text-mainFont text-fontColor font-bold text-[21px]'>Menu</h2>
+                    <FaBars className=' w-6 h-6 rounded border-secondaryColor border-2 p-1' onClick={changeNavState}/>
+                    <h2 className=' text-mainFont text-fontColor font-bold text-[21px]' onClick={changeNavState}>Menu</h2>
                 </Flex>
             )}
 
             <Container>
-                <nav>
+                <nav ref={navbarRef}>
                     <Flex className={"justify-center"}>
                         <List
                             className={

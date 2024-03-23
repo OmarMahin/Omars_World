@@ -36,14 +36,14 @@ export function decideSizeAndPos(width, getSize, getCameraDis, getLetterPos, coo
         }
     } else if (window.innerWidth >= 320) {
         _w = window.innerWidth;
-        _h = 600;
-        _cameraDis = 26;
+        _h = 1000;
+        _cameraDis = 34;
         if (coord_L && coord_O) {
             _l_x = coord_L.x + coord_L.height * 0.6;
             _l_y = coord_L.y - coord_L.height * 1.5;
 
             _o_x = coord_O.x + coord_O.width / 2;
-            _o_y = coord_O.y + coord_O.height / 1.4;
+            _o_y = coord_O.y + coord_O.height / 1.35;
         }
     }
 
