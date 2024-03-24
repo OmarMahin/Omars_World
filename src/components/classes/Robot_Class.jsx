@@ -21,8 +21,7 @@ export default class RobotWithBall {
 		_bx,
 		_by,
 		_bz
-	) {	
-
+	) {
 		// Robot
 
 		this.renderBody = _renderBody
@@ -97,10 +96,16 @@ export default class RobotWithBall {
 			arr[i].position.set(0, 0, 0)
 		}
 
-
-		// Ball class 
+		// Ball class
 		this.ballPos = new THREE.Vector3(_bx, _by, _bz)
-		this.ball = new Ball(_renderBallBody,this.scene,this.physicsScene,this.ballPos.x, this.ballPos.y, this.ballPos.z)
+		this.ball = new Ball(
+			_renderBallBody,
+			this.scene,
+			this.physicsScene,
+			this.ballPos.x,
+			this.ballPos.y,
+			this.ballPos.z
+		)
 
 		this.ballTargetBody = this.ball.targetBody
 		this.ballPhysicsBody = this.ball.physicsBody
@@ -439,7 +444,7 @@ export default class RobotWithBall {
 					if (this.timeStamp == 0) {
 						this.controlBot("S", this.forwardSpeed)
 						const tempPos = new THREE.Vector3(100, 10, 100)
-						this.ball.changeBallPosition(tempPos, true, true,false,false)
+						this.ball.changeBallPosition(tempPos, true, true, false, false)
 						this.timeStamp += 1
 					} else if (this.timeStamp < 50) {
 						this.controlBot("F", this.forwardSpeed)
@@ -469,40 +474,59 @@ export default class RobotWithBall {
 						this.ball.changeBallPosition(target_pos.position, false, true, true, false)
 					}
 
-					if (this.timeStamp == 0) {
-						this.controlBot("F", -this.forwardSpeed)
-						this.timeStamp += 1
-					} else if (this.timeStamp < 250) {
-						this.timeStamp += 1
-					} else if (this.timeStamp == 250) {
-						this.controlBot("S", -20)
-						if (
-							Math.abs(this.chassis.getWheelSpeed(0)) < 0.01 &&
-							Math.abs(this.chassis.getWheelSpeed(1)) < 0.01
-						) {
-							this.timeStamp = 300
-						}
-					} else if (this.timeStamp >= 300 && this.timeStamp < 350) {
-						this.controlBot("L", this.turningSpeed)
-						this.timeStamp += 1
-					} else if (this.timeStamp == 350) {
-						this.controlBot("S", -20)
+					const distance = Math.abs(
+						this.renderBody.position.distanceTo(this.initialBotCoordSphere.position)
+					)
+
+					if (distance > 1 && this.timeStamp == 0) {
+						this.controlBot("F", -10)
+					} else if (distance < 1) {
+						this.timeStamp = 1
+					} else {
 						if (
 							Math.abs(this.chassis.getWheelSpeed(0)) < 0.01 &&
 							Math.abs(this.chassis.getWheelSpeed(1)) < 0.01
 						) {
 							this.controlBot("S", 0)
 							this.resetEverything()
+						} else {
+							this.controlBot("S", this.forwardSpeed * 2)
 						}
 					}
+
+					// if (this.timeStamp == 0) {
+					// 	this.controlBot("F", -this.forwardSpeed)
+					// 	this.timeStamp += 1
+					// } else if (this.timeStamp < 250) {
+					// 	this.timeStamp += 1
+					// } else if (this.timeStamp == 250) {
+					// 	this.controlBot("S", -20)
+					// 	if (
+					// 		Math.abs(this.chassis.getWheelSpeed(0)) < 0.01 &&
+					// 		Math.abs(this.chassis.getWheelSpeed(1)) < 0.01
+					// 	) {
+					// 		this.timeStamp = 300
+					// 	}
+					// } else if (this.timeStamp >= 300 && this.timeStamp < 350) {
+					// 	this.controlBot("L", this.turningSpeed)
+					// 	this.timeStamp += 1
+					// } else if (this.timeStamp == 350) {
+					// 	this.controlBot("S", -20)
+					// 	if (
+					// 		Math.abs(this.chassis.getWheelSpeed(0)) < 0.01 &&
+					// 		Math.abs(this.chassis.getWheelSpeed(1)) < 0.01
+					// 	) {
+					// 		this.controlBot("S", 0)
+					// 		this.resetEverything()
+					// 	}
+					// }
 				}
 			}
 		}
 	}
 
 	resetEverything() {
-
-		this.ball.changeBallPosition(this.ballPos,false,true,true,true)
+		this.ball.changeBallPosition(this.ballPos, false, true, true, true)
 
 		this.side = null
 		this.targetPosition = new THREE.Vector2(0, 0)
