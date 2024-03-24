@@ -1,20 +1,30 @@
 import * as cannon from "cannon-es"
 import * as THREE from "three"
-import { changeBallPostion, checkBallVisibility } from "../../functions/Ball"
+import Ball from "./Ball_Class"
 
-export default class Robot {
+export default class RobotWithBall {
 	reset = false
+	ballTargetBody = null
+	ballPhysicsBody = null
+
 	constructor(
 		_renderBody,
 		_renderBodyWithTarget,
 		_renderWheelR,
 		_renderWheelL,
+		_renderBallBody,
 		_renderScene,
 		_physicsScene,
 		_ix,
 		_iy,
-		_iz
-	) {
+		_iz,
+		_bx,
+		_by,
+		_bz
+	) {	
+
+		// Robot
+
 		this.renderBody = _renderBody
 		this.renderBodyWithTarget = _renderBodyWithTarget
 		this.renderWheelR = _renderWheelR
@@ -35,11 +45,11 @@ export default class Robot {
 		this.frontPointSphere1 = this.#genaratePhysicalWheel(0.5, 0.1)
 		this.frontPointSphere2 = this.#genaratePhysicalWheel(0.5, 0.1)
 
-		//Variables
+		//Robot Variables
 
 		this.side = null
 		this.targetPosition = new THREE.Vector2(0, 0)
-		this.distanceDiffThreshold = 0.6
+		this.distanceDiffThreshold = 0.5
 		this.rotate = true
 		this.forward = false
 		this.turningSpeed = 10
@@ -86,6 +96,14 @@ export default class Robot {
 			this.scene.add(arr[i])
 			arr[i].position.set(0, 0, 0)
 		}
+
+
+		// Ball class 
+		this.ballPos = new THREE.Vector3(_bx, _by, _bz)
+		this.ball = new Ball(_renderBallBody,this.scene,this.physicsScene,this.ballPos.x, this.ballPos.y, this.ballPos.z)
+
+		this.ballTargetBody = this.ball.targetBody
+		this.ballPhysicsBody = this.ball.physicsBody
 	}
 
 	#generateChassis(w, h, d, ix, iy, iz) {
@@ -165,6 +183,8 @@ export default class Robot {
 			this.renderBody.position.copy(this.botPhysicalBody.position)
 			this.renderBody.quaternion.copy(this.botPhysicalBody.quaternion)
 		}
+
+		this.ball.renderBall()
 	}
 
 	controlBot(_input, speed) {
@@ -419,7 +439,7 @@ export default class Robot {
 					if (this.timeStamp == 0) {
 						this.controlBot("S", this.forwardSpeed)
 						const tempPos = new THREE.Vector3(100, 10, 100)
-						changeBallPostion(tempPos, true, true, false)
+						this.ball.changeBallPosition(tempPos, true, true,false,false)
 						this.timeStamp += 1
 					} else if (this.timeStamp < 50) {
 						this.controlBot("F", this.forwardSpeed)
@@ -444,9 +464,9 @@ export default class Robot {
 				) {
 					this.#botMovement(target_pos)
 				} else if (this.destinationReached2) {
-					if (!checkBallVisibility()) {
+					if (!this.ball.checkBallVisibility()) {
 						this.controlBot("S", this.forwardSpeed)
-						changeBallPostion(target_pos.position, false, true, true)
+						this.ball.changeBallPosition(target_pos.position, false, true, true, false)
 					}
 
 					if (this.timeStamp == 0) {
@@ -472,7 +492,7 @@ export default class Robot {
 							Math.abs(this.chassis.getWheelSpeed(1)) < 0.01
 						) {
 							this.controlBot("S", 0)
-							this.resetBot()
+							this.resetEverything()
 						}
 					}
 				}
@@ -480,7 +500,10 @@ export default class Robot {
 		}
 	}
 
-	resetBot() {
+	resetEverything() {
+
+		this.ball.changeBallPosition(this.ballPos,false,true,true,true)
+
 		this.side = null
 		this.targetPosition = new THREE.Vector2(0, 0)
 		this.distanceDiffThreshold = 0.6

@@ -5,7 +5,6 @@ import { useState } from "react"
 import Button from "./Button"
 import Container from "./Container"
 
-import Robot from "./classes/Robot_Class"
 import * as THREE from "three"
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js"
 import * as CANNON from "cannon-es"
@@ -14,12 +13,12 @@ import {
 	groundPhyBody,
 } from "../functions/Robot.jsx"
 
-import { ball, loadBall, render_Ball } from "../functions/Ball.jsx"
 import { Vector3 } from "three"
 import { normaliseCoordinates } from "../functions/2d_3d_conversion.jsx"
 import { useRef } from "react"
 import Flex from "./Flex"
 import { decideSizeAndPos } from "../functions/SizeAndPosition"
+import RobotWithBall from "./classes/Robot_Class"
 
 const Home_Animation = () => {
 	const [zoomed, setZoomed] = useState(false)
@@ -133,7 +132,6 @@ const Home_Animation = () => {
 	let physics_ball = null,
 		positionBall = null,
 		ball_body = null
-	let _robot = null
 
 	model.load(
 		"/3d_models/TuFu.glb",
@@ -206,18 +204,7 @@ const Home_Animation = () => {
 		botPos.y = 1.8
 		botPos.z = intersects.z
 
-		robot = new Robot(
-			botBody,
-			botWithBall,
-			botWheelR,
-			botWheelL,
-			scene,
-			physics_world,
-			botPos.x,
-			botPos.y,
-			botPos.z
-		)
-
+		
 		let coords_O = new THREE.Vector2()
 		coords_O = normaliseCoordinates(
 			letter_O_Coords.x,
@@ -229,17 +216,25 @@ const Home_Animation = () => {
 		intersects = new THREE.Vector3()
 		raycaster.ray.intersectPlane(plane, intersects)
 
-		loadBall(ball_body, scene)
-		let [physical_Body, render_body, target_body] = ball(
-			physics_world,
+        robot = new RobotWithBall(
+			botBody,
+			botWithBall,
+			botWheelR,
+			botWheelL,
+            ball_body,
 			scene,
-			intersects.x,
-			1 + 1,
-			intersects.z
+			physics_world,
+			botPos.x,
+			botPos.y,
+			botPos.z,
+            intersects.x,
+            0.9,
+            intersects.z
 		)
-		physics_ball = physical_Body
-		ball_body = render_body
-		positionBall = target_body
+
+
+		physics_ball = robot.ballPhysicsBody
+		positionBall = robot.ballTargetBody
 
 		target_sphere.position.set(intersects.x, 1, intersects.z)
 
@@ -329,6 +324,12 @@ const Home_Animation = () => {
 		window.removeEventListener("mousedown", mouseDown)
 		window.removeEventListener("mouseup", mouseUp)
 		window.removeEventListener("mousemove", mouseMovement)
+	}
+
+    else{
+	    window.removeEventListener('touchstart', touchDown)
+	    window.removeEventListener('touchend', touchUp)
+	    window.removeEventListener('touchmove', touchMove)
 	}
 
 	function mouseDown(e) {
@@ -430,11 +431,7 @@ const Home_Animation = () => {
 		}
 	}
 
-	// else{
-	//     window.removeEventListener('touchstart')
-	//     window.removeEventListener('touchend')
-	//     window.removeEventListener('touchmove')
-	// }
+	
 
 	//picking object and dragging it
 
@@ -466,16 +463,10 @@ const Home_Animation = () => {
 		if (robot && ball_body) {
 			// c_debug.update() //physics debugger
 
-			render_Ball()
 			robot.botRender()
 
 			robot.target_Pick_Drop(positionBall, target_sphere)
 			pickedObject()
-			// if (robot.reset){
-			//     robot = new Robot(botBody,botWithBall, botWheelR,botWheelL, scene, physics_world, botPos.x, botPos.y, botPos.z)
-			//     // setResetScene(!resetScene)
-			// }
-			console.log(robot.reset)
 		}
 
 		requestAnimationFrame(animate)
@@ -511,10 +502,6 @@ const Home_Animation = () => {
 							</span>
 							) Learn more...
 						</p>
-						{/* <p className="mt-6 max-w-480B lg:max-w-[650px] text-mainFont font-bold text-[#5B5B5B] lg:leading-8 lg:text-lg text-base leading-8">
-            The letter ‘o’ in ‘World’ looks a bit suspicious. I wonder what
-                happens if you move it far away.... 
-            </p> */}
 						<div className='mt-11'>
 							<Flex
 								className={"flex-wrap gap-4 justify-center lg:justify-start relative z-20"}
