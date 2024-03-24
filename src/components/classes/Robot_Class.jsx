@@ -311,7 +311,7 @@ export default class RobotWithBall {
 			}
 
 			if (this.forward && !this.rotate) {
-				this.forwardSpeed = -20
+				this.forwardSpeed = this.forwardSpeed < 0 ? this.forwardSpeed : this.forwardSpeed * -1
 
 				if (
 					Math.abs(targetDistance1 - targetDistance2) > this.distanceDiffThreshold &&
@@ -367,7 +367,7 @@ export default class RobotWithBall {
 			}
 
 			if (this.forward && !this.rotate) {
-				this.forwardSpeed = 20
+				this.forwardSpeed = this.forwardSpeed > 0 ? this.forwardSpeed : this.forwardSpeed * -1
 
 				if (
 					(Math.abs(targetDistance1 - targetDistance2) > this.distanceDiffThreshold ||
@@ -467,6 +467,7 @@ export default class RobotWithBall {
 					!this.destinationReached2 &&
 					this.initialBotCoordReached
 				) {
+					this.forwardSpeed = 10
 					this.#botMovement(target_pos)
 				} else if (this.destinationReached2) {
 					if (!this.ball.checkBallVisibility()) {
