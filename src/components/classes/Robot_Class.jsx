@@ -1,7 +1,9 @@
 import * as cannon from "cannon-es"
 import * as THREE from "three"
+import { changeBallPostion, checkBallVisibility } from "../../functions/Ball"
 
 export default class Robot {
+	reset = false
 	constructor(
 		_renderBody,
 		_renderBodyWithTarget,
@@ -17,6 +19,9 @@ export default class Robot {
 		this.renderBodyWithTarget = _renderBodyWithTarget
 		this.renderWheelR = _renderWheelR
 		this.renderWheelL = _renderWheelL
+		this.botPos_x = _ix
+		this.botPos_y = _iy
+		this.botPos_z = _iz
 
 		this.scene = _renderScene
 		this.physicsScene = _physicsScene
@@ -34,7 +39,7 @@ export default class Robot {
 
 		this.side = null
 		this.targetPosition = new THREE.Vector2(0, 0)
-		this.distanceDiffThreshold = 0.8
+		this.distanceDiffThreshold = 0.6
 		this.rotate = true
 		this.forward = false
 		this.turningSpeed = 10
@@ -61,20 +66,35 @@ export default class Robot {
 
 		this.scene.add(this.initialBotCoordSphere)
 
-		this.chassis = new cannon.RigidVehicle({
-			chassisBody: this.#genarateBotPhysicalBody(
-				this.width,
-				this.height,
-				this.depth,
-				_ix,
-				_iy,
-				_iz
-			),
-		})
-
+		this.chassis = this.#generateChassis(
+			this.width,
+			this.height,
+			this.depth,
+			this.botPos_x,
+			this.botPos_y,
+			this.botPos_z
+		)
 		this.physicalWheelL.quaternion.copy(this.botPhysicalBody.quaternion)
 		this.physicalWheelR.quaternion.copy(this.botPhysicalBody.quaternion)
 
+		this.#addWheelToChassis()
+
+		this.chassis.addToWorld(this.physicsScene)
+
+		const arr = [this.renderBody, this.renderBodyWithTarget, this.renderWheelL, this.renderWheelR]
+		for (let i = 0; i < 4; i++) {
+			this.scene.add(arr[i])
+			arr[i].position.set(0, 0, 0)
+		}
+	}
+
+	#generateChassis(w, h, d, ix, iy, iz) {
+		return new cannon.RigidVehicle({
+			chassisBody: this.#genarateBotPhysicalBody(w, h, d, ix, iy, iz),
+		})
+	}
+
+	#addWheelToChassis() {
 		this.chassis.addWheel({
 			body: this.physicalWheelL,
 			position: new cannon.Vec3(-0.8, -0.5, -this.depth / 2 - 0.2),
@@ -102,14 +122,6 @@ export default class Robot {
 			position: new cannon.Vec3(this.width / 2 + 1, 1, 3),
 			axis: new cannon.Vec3(0, 1, 0),
 		})
-
-		this.chassis.addToWorld(this.physicsScene)
-
-		const arr = [this.renderBody, this.renderBodyWithTarget, this.renderWheelL, this.renderWheelR]
-		for (let i = 0; i < 4; i++) {
-			this.scene.add(arr[i])
-			arr[i].position.set(0, 0, 0)
-		}
 	}
 
 	#genarateBotPhysicalBody(w, h, d, px, py, pz) {
@@ -155,25 +167,6 @@ export default class Robot {
 		}
 	}
 
-	#distanceFromBot() {
-		const distance1 = Math.sqrt(
-			Math.abs(this.botPhysicalBody.position.x - this.frontPointSphere1.position.x) +
-				Math.abs(this.botPhysicalBody.position.z - this.frontPointSphere1.position.z)
-		)
-
-		const distance2 = Math.sqrt(
-			Math.abs(this.botPhysicalBody.position.x - this.frontPointSphere2.position.x) +
-				Math.abs(this.botPhysicalBody.position.z - this.frontPointSphere2.position.z)
-		)
-
-		const distance3 = Math.sqrt(
-			Math.abs(this.botPhysicalBody.position.x - this.casterWHeel.position.x) +
-				Math.abs(this.botPhysicalBody.position.z - this.casterWHeel.position.z)
-		)
-
-		return [distance1, distance2, distance3]
-	}
-
 	controlBot(_input, speed) {
 		if (_input == "F") {
 			this.chassis.setWheelForce(-speed, 1)
@@ -193,8 +186,8 @@ export default class Robot {
 	#calculateSide(target) {
 		const x = target.position.x
 		const y = target.position.z
-		const x1 = this.botPhysicalBody.position.x
-		const y1 = this.botPhysicalBody.position.z
+		const x1 = this.renderBody.position.x
+		const y1 = this.renderBody.position.z
 		const x2 = this.casterWHeel.position.x
 		const y2 = this.casterWHeel.position.z
 
@@ -210,13 +203,13 @@ export default class Robot {
 				Math.abs(targetDistance1 - targetDistance2) > this.distanceDiffThreshold &&
 				this.rotate
 			) {
-				this.controlBot("R", this.turningSpeed)
+				this.controlBot("L", this.turningSpeed)
 			} else if (
 				Math.abs(targetDistance1 - targetDistance2) <= this.distanceDiffThreshold &&
 				this.rotate &&
 				targetDistance3 - targetDistance1 < -1
 			) {
-				this.controlBot("R", this.turningSpeed)
+				this.controlBot("L", this.turningSpeed)
 			} else if (targetDistance3 - targetDistance1 > 0 || this.rotate == false) {
 				this.rotate = false
 				this.controlBot("S", -this.forwardSpeed)
@@ -226,13 +219,13 @@ export default class Robot {
 				Math.abs(targetDistance1 - targetDistance2) > this.distanceDiffThreshold &&
 				this.rotate
 			) {
-				this.controlBot("L", this.turningSpeed)
+				this.controlBot("R", this.turningSpeed)
 			} else if (
 				Math.abs(targetDistance1 - targetDistance2) <= this.distanceDiffThreshold &&
 				this.rotate &&
 				targetDistance3 - targetDistance1 < -1
 			) {
-				this.controlBot("L", this.turningSpeed)
+				this.controlBot("R", this.turningSpeed)
 			} else if (targetDistance3 - targetDistance1 > 0 || this.rotate == false) {
 				this.rotate = false
 				this.controlBot("S", -this.forwardSpeed)
@@ -246,7 +239,7 @@ export default class Robot {
 				Math.abs(targetDistance1 - targetDistance2) > this.distanceDiffThreshold &&
 				this.rotate
 			) {
-				this.controlBot("R", this.turningSpeed)
+				this.controlBot("L", this.turningSpeed)
 			} else if (targetDistance3 - targetDistance1 < -1 || this.rotate == false) {
 				this.rotate = false
 				this.controlBot("S", -this.forwardSpeed)
@@ -256,7 +249,7 @@ export default class Robot {
 				Math.abs(targetDistance1 - targetDistance2) > this.distanceDiffThreshold &&
 				this.rotate
 			) {
-				this.controlBot("L", this.turningSpeed)
+				this.controlBot("R", this.turningSpeed)
 			} else if (targetDistance3 - targetDistance1 < -1 || this.rotate == false) {
 				this.rotate = false
 				this.controlBot("S", -this.forwardSpeed)
@@ -268,7 +261,7 @@ export default class Robot {
 		const targetDistance1 = this.frontPointSphere1.position.distanceTo(target.position)
 		const targetDistance2 = this.frontPointSphere2.position.distanceTo(target.position)
 		const targetDistance3 = this.casterWHeel.position.distanceTo(target.position)
-		const targetDistance4 = Math.abs(this.botPhysicalBody.position.distanceTo(target.position))
+		const targetDistance4 = Math.abs(this.renderBody.position.distanceTo(target.position))
 
 		if (!this.side) this.side = this.#calculateSide(target)
 
@@ -293,7 +286,8 @@ export default class Robot {
 			}
 
 			if (this.forward && !this.rotate) {
-				this.forwardSpeed = this.forwardSpeed < 0 ? this.forwardSpeed : -1 * this.forwardSpeed
+				this.forwardSpeed = -20
+
 				if (
 					Math.abs(targetDistance1 - targetDistance2) > this.distanceDiffThreshold &&
 					targetDistance3 > 5
@@ -348,7 +342,7 @@ export default class Robot {
 			}
 
 			if (this.forward && !this.rotate) {
-				this.forwardSpeed = this.forwardSpeed > 0 ? this.forwardSpeed : -1 * this.forwardSpeed
+				this.forwardSpeed = 20
 
 				if (
 					(Math.abs(targetDistance1 - targetDistance2) > this.distanceDiffThreshold ||
@@ -376,7 +370,7 @@ export default class Robot {
 						this.rotate = false
 						this.initialBotCoordReached = true
 					}
-				} else if (targetDistance4 < 4) {
+				} else if (targetDistance3 < 4) {
 					this.controlBot("S", this.forwardSpeed)
 					this.forward = false
 					this.rotate = false
@@ -386,5 +380,134 @@ export default class Robot {
 				}
 			}
 		}
+	}
+
+	target_Pick_Drop(target, target_pos) {
+		const null_pos = new THREE.Vector2(0, 0)
+		const pos = new THREE.Vector2(target.position.x, target.position.z)
+
+		const threshold = 0.5
+		const distance = Math.sqrt(
+			Math.abs(target_pos.position.x - target.position.x) +
+				Math.abs(target_pos.position.z - target.position.z)
+		)
+
+		if (distance <= threshold && !this.destinationReached) {
+			return
+		} else {
+			if (this.targetPosition.equals(null_pos)) {
+				this.targetPosition.copy(pos)
+			}
+
+			if (this.targetPosition.distanceTo(pos) > 1 && !this.destinationReached) {
+				if (
+					Math.abs(this.chassis.getWheelSpeed(0)) < 0.01 ||
+					Math.abs(this.chassis.getWheelSpeed(0)) < 0.01
+				) {
+					this.targetPosition.copy(pos)
+					this.controlBot("S", 0)
+					this.side = this.#calculateSide(target)
+					this.rotate = true
+					this.forward = false
+				} else {
+					this.controlBot("S", -this.forwardSpeed)
+				}
+			} else {
+				if (this.destinationReached == false) {
+					this.#botMovement(target)
+				} else if (this.destinationReached && !this.setDestination2) {
+					if (this.timeStamp == 0) {
+						this.controlBot("S", this.forwardSpeed)
+						const tempPos = new THREE.Vector3(100, 10, 100)
+						changeBallPostion(tempPos, true, true, false)
+						this.timeStamp += 1
+					} else if (this.timeStamp < 50) {
+						this.controlBot("F", this.forwardSpeed)
+						this.timeStamp += 1
+					} else {
+						this.controlBot("S", this.forwardSpeed)
+					}
+
+					if (
+						Math.abs(this.chassis.getWheelSpeed(0)) < 0.01 &&
+						Math.abs(this.chassis.getWheelSpeed(1)) < 0.01
+					) {
+						this.setDestination2 = true
+						this.timeStamp = 0
+					}
+				} else if (this.setDestination2 && !this.initialBotCoordReached) {
+					this.#botMovement(this.initialBotCoordSphere)
+				} else if (
+					this.setDestination2 &&
+					!this.destinationReached2 &&
+					this.initialBotCoordReached
+				) {
+					this.#botMovement(target_pos)
+				} else if (this.destinationReached2) {
+					if (!checkBallVisibility()) {
+						this.controlBot("S", this.forwardSpeed)
+						changeBallPostion(target_pos.position, false, true, true)
+					}
+
+					if (this.timeStamp == 0) {
+						this.controlBot("F", -this.forwardSpeed)
+						this.timeStamp += 1
+					} else if (this.timeStamp < 250) {
+						this.timeStamp += 1
+					} else if (this.timeStamp == 250) {
+						this.controlBot("S", -20)
+						if (
+							Math.abs(this.chassis.getWheelSpeed(0)) < 0.01 &&
+							Math.abs(this.chassis.getWheelSpeed(1)) < 0.01
+						) {
+							this.timeStamp = 300
+						}
+					} else if (this.timeStamp >= 300 && this.timeStamp < 350) {
+						this.controlBot("L", this.turningSpeed)
+						this.timeStamp += 1
+					} else if (this.timeStamp == 350) {
+						this.controlBot("S", -20)
+						if (
+							Math.abs(this.chassis.getWheelSpeed(0)) < 0.01 &&
+							Math.abs(this.chassis.getWheelSpeed(1)) < 0.01
+						) {
+							this.controlBot("S", 0)
+							this.resetBot()
+						}
+					}
+				}
+			}
+		}
+	}
+
+	resetBot() {
+		this.side = null
+		this.targetPosition = new THREE.Vector2(0, 0)
+		this.distanceDiffThreshold = 0.6
+		this.rotate = true
+		this.forward = false
+		this.turningSpeed = 10
+		this.forwardSpeed = 20
+		this.destinationReached = false
+		this.destinationReached2 = false
+		this.setDestination2 = false
+		this.initialBotCoordReached = false
+		this.reverse = -1
+		this.timeStamp = 0
+		this.chassis.removeFromWorld(this.physicsScene)
+		this.chassis = this.#generateChassis(
+			this.width,
+			this.height,
+			this.depth,
+			this.botPos_x,
+			this.botPos_y,
+			this.botPos_z
+		)
+		this.physicalWheelL.quaternion.copy(this.botPhysicalBody.quaternion)
+		this.physicalWheelR.quaternion.copy(this.botPhysicalBody.quaternion)
+
+		this.#addWheelToChassis()
+
+		this.chassis.addToWorld(this.physicsScene)
 	}
 }

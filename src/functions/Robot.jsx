@@ -288,7 +288,7 @@ function botMovement(target, robot) {
 	const targetDistance3 = casterWheel.position.distanceTo(target.position)
 	const targetDistance4 = Math.abs(botPhysicalBodyShape.position.distanceTo(target.position))
 	// console.log(targetDistance3 - targetDistance2 + ' ' + rotate + ' ' + forward)
-	// console.log(targetDistance3 - targetDistance2);
+	console.log(targetDistance4)
 	if (!side) side = calculateSide(target)
 	speed = 10
 	if (
