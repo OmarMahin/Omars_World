@@ -326,16 +326,16 @@ const Home_Animation = () => {
 		window.removeEventListener("mousemove", mouseMovement)
 	}
 
-    else{
-	    window.removeEventListener('touchstart', touchDown)
-	    window.removeEventListener('touchend', touchUp)
-	    window.removeEventListener('touchmove', touchMove)
-	}
+    // else{
+	//     window.removeEventListener('touchstart', touchDown)
+	//     window.removeEventListener('touchend', touchUp)
+	//     window.removeEventListener('touchmove', touchMove)
+	// }
 
 	function mouseDown(e) {
-		mouse = normaliseCoordinates(e.clientX, e.clientY, sizes.width, sizes.height)
+		mouseMove = normaliseCoordinates(e.clientX, e.clientY, sizes.width, sizes.height)
 
-		raycaster.setFromCamera(mouse, camera)
+		raycaster.setFromCamera(mouseMove, camera)
 
 		objects = raycaster.intersectObjects(scene.children, false)
 
@@ -348,14 +348,15 @@ const Home_Animation = () => {
 	}
 
 	function touchDown(e) {
-		mouse = normaliseCoordinates(
+		mouseMove = normaliseCoordinates(
 			e.touches[0].clientX,
 			e.touches[0].clientY,
 			sizes.width,
 			sizes.height
 		)
 
-		raycaster.setFromCamera(mouse, camera)
+
+		raycaster.setFromCamera(mouseMove, camera)
 
 		objects = raycaster.intersectObjects(scene.children, false)
 
