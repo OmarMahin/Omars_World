@@ -494,10 +494,10 @@ const Home_Animation = () => {
 							r<span ref={letter_L_ref}>l</span>d
 						</h1>
 
-						<p className='mt-6 max-w-480B lg:max-w-[650px] text-mainFont font-bold text-[#3C3C3C] lg:leading-8 lg:text-lg text-base leading-8'>
+						<p className='mt-6 max-w-480B lg:max-w-[650px] text-mainFont font-bold text-[#3C3C3C] lg:leading-8 lg:text-xl text-lg leading-8 trac'>
 							My name is Omar. I love to play with codes and make my own mechanical buddies,
 							like the one you are seeing here, right on top of the word ‘World’. (
-							<span className='text-[#5B5B5B]'>
+							<span className='text-[#292828] tracking-wide'>
 								The letter ‘o’ in ‘World’ looks a bit suspicious. I wonder what happens if
 								you move it far away....
 							</span>
