@@ -48,10 +48,10 @@ export default class RobotWithBall {
 
 		this.side = null
 		this.targetPosition = new THREE.Vector2(0, 0)
-		this.distanceDiffThreshold = 0.7
+		this.distanceDiffThreshold = 0.8
 		this.rotate = true
 		this.forward = false
-		this.turningSpeed = 10
+		this.turningSpeed = 15
 		this.forwardSpeed = 20
 		this.destinationReached = false
 		this.destinationReached2 = false
@@ -238,7 +238,7 @@ export default class RobotWithBall {
 				this.controlBot("L", this.turningSpeed)
 			} else if (targetDistance3 - targetDistance1 > 0 || this.rotate == false) {
 				this.rotate = false
-				this.controlBot("S", -this.forwardSpeed)
+				this.controlBot("S", -this.turningSpeed)
 			}
 		} else if (this.side == 2) {
 			if (
@@ -254,7 +254,7 @@ export default class RobotWithBall {
 				this.controlBot("R", this.turningSpeed)
 			} else if (targetDistance3 - targetDistance1 > 0 || this.rotate == false) {
 				this.rotate = false
-				this.controlBot("S", -this.forwardSpeed)
+				this.controlBot("S", -this.turningSpeed)
 			}
 		}
 	}
@@ -268,7 +268,7 @@ export default class RobotWithBall {
 				this.controlBot("L", this.turningSpeed)
 			} else if (targetDistance3 - targetDistance1 < -1 || this.rotate == false) {
 				this.rotate = false
-				this.controlBot("S", -this.forwardSpeed)
+				this.controlBot("S", -this.turningSpeed)
 			}
 		} else if (this.side == 2) {
 			if (
@@ -278,7 +278,7 @@ export default class RobotWithBall {
 				this.controlBot("R", this.turningSpeed)
 			} else if (targetDistance3 - targetDistance1 < -1 || this.rotate == false) {
 				this.rotate = false
-				this.controlBot("S", -this.forwardSpeed)
+				this.controlBot("S", -this.turningSpeed)
 			}
 		}
 	}
@@ -502,33 +502,7 @@ export default class RobotWithBall {
 					}
 					
 
-					// const distance = Math.abs(
-					// 	this.renderBody.position.distanceTo(this.initialBotCoordSphere.position)
-
-					// )
-					// if (
-					// 	Math.abs(this.chassis.getWheelSpeed(0)) < 0.01 &&
-					// 	Math.abs(this.chassis.getWheelSpeed(1)) < 0.01
-					// ) {
-					// 	this.flag = false
-					// }
-
-					// if (this.flag == false){
-					// 	if (distance > 1 && this.timeStamp == 0) {
-					// 		this.controlBot("F", -10)
-					// 	} else if (distance < 1) {
-					// 		this.timeStamp = 1
-					// 	} else {
-					// 		if (
-					// 			Math.abs(this.chassis.getWheelSpeed(0)) < 0.01 &&
-					// 			Math.abs(this.chassis.getWheelSpeed(1)) < 0.01
-					// 		) {
-								
-					// 		} else {
-					// 			this.controlBot("S", this.forwardSpeed * 2)
-					// 		}
-					// 	}
-					// }
+					
 				}
 			}
 		}
