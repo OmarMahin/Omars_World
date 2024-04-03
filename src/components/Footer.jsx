@@ -2,7 +2,7 @@ import React from "react";
 import Container from "./Container";
 import Flex from "./Flex";
 import FooterList from "./FooterList";
-import Link from "./Link";
+import { Link } from 'react-router-dom'
 import { IoMail } from "react-icons/io5";
 import ListItem from "./ListItem";
 import { FaInstagram } from "react-icons/fa6";
@@ -77,25 +77,29 @@ const Footer = () => {
                         <ListItem className={'gap-3 ml-[3px] mt-2'}>
                             <Link
                                 className={"text-mainFont font-bold text-lightFontColor text-base"}
-                                href = {'https://www.instagram.com/ok_mahin_r/'}
+                                to = {'https://www.instagram.com/ok_mahin_r/'}
+                                target = '_blank'
                             >
                                 <FaInstagram className="p-[2px] bg-secondaryColor rounded text-white h-6 w-6 hover:text-secondaryColor hover:bg-backgroundColor border-2 border-secondaryColor duration-150"/>
                             </Link>
                             <Link
                                 className={"text-mainFont font-bold text-lightFontColor text-base"}
-                                href={'https://www.linkedin.com/in/md-omar-karim/'}
+                                to={'https://www.linkedin.com/in/md-omar-karim/'}
+                                target = '_blank'
                             >
                                 <FaLinkedinIn className="p-[2px] bg-secondaryColor rounded text-white h-6 w-6 hover:text-secondaryColor hover:bg-backgroundColor border-2 border-secondaryColor duration-150"/>
                             </Link>
                             <Link
                                 className={"text-mainFont font-bold text-lightFontColor text-base"}
-                                href = {'https://www.facebook.com/anduin02'}
+                                to = {'https://www.facebook.com/anduin02'}
+                                target = '_blank'
                             >
                                 <FaFacebookF className="p-[2px] bg-secondaryColor rounded text-white h-6 w-6 hover:text-secondaryColor hover:bg-backgroundColor border-2 border-secondaryColor duration-150"/>
                             </Link>
                             <Link
                                 className={"text-mainFont font-bold text-lightFontColor text-base"}
-                                href = {'https://github.com/OmarMahin'}
+                                to = {'https://github.com/OmarMahin'}
+                                target = '_blank'
                             >
                                 <FiGithub className="p-[2px] bg-secondaryColor rounded text-white h-6 w-6 hover:text-secondaryColor hover:bg-backgroundColor border-2 border-secondaryColor duration-150"/>
                             </Link>
